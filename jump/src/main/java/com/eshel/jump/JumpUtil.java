@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
 public class JumpUtil {
+    public static final String FLAG = "flag";
 
     @SuppressWarnings("unchecked")
     public static<T> T create(Class<T> clazz){
@@ -23,6 +24,11 @@ public class JumpUtil {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new JumpInvokeHandler());
     }
 
+    /**
+     * 调用后执行使用注解 @IntentParser 的对应 id 的方法
+     * @param target 带@IntentParser注解的方法所在的类的对象
+     * @param intent 使用 activity.getIntent();
+     */
     public static void parseIntent(Object target, @NonNull Intent intent){
         parseIntent(0, target, intent);
     }
@@ -176,11 +182,11 @@ public class JumpUtil {
         return obj == null;
     }
 
-    private static final int INT = 0;
-    private static final int FLOAT = 1;
-    private static final int STRING = 2;
+    private static final int INT = 10;
+    private static final int FLOAT = 11;
+    private static final int STRING = 12;
     // type: 0 int, 1 float ,2 String
-    private static Object getFlag(Object target, Intent intent, String key, int type){
+    public static<T> T getFlag(Object target, Intent intent, String key, int type){
         Object flag = null;
         if(intent != null) {
             switch (type){
@@ -193,19 +199,24 @@ public class JumpUtil {
                 case STRING:
                     flag = intent.getStringExtra(key);
                     break;
+                default:
+                    flag = intent.getSerializableExtra(key);
+                    break;
             }
 
             if((flag instanceof Integer || int.class.isInstance(flag)) && (int)flag != 0){
-                return flag;
+                return (T) flag;
             }else if((flag instanceof Float || float.class.isInstance(flag)) && (float)flag != 0){
-                return flag;
+                return (T) flag;
             }else if(flag instanceof String)
-                return flag;
+                return (T) flag;
+            else
+                return (T) flag;
         }
         MemoryIntent memoryIntent = MemoryIntent.getIntent(target.getClass());
         if(memoryIntent != null)
             flag = memoryIntent.load(key, Object.class);
-        return flag;
+        return (T) flag;
     }
 
     public static float getFlagFloat(Object target, Intent intent, String key) {
