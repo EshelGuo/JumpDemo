@@ -30,7 +30,8 @@ public class JumpUtil {
      * @param intent 使用 activity.getIntent();
      */
     public static void parseIntent(Object target, @NonNull Intent intent){
-        parseIntent(0, target, intent);
+        int id = intent.getIntExtra(com.eshel.jump.anno.Intent.PARSE_ID, 0);
+        parseIntent(id, target, intent);
     }
 
     public static void parseMemoryIntent(Object target){

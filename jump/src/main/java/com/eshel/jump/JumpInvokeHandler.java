@@ -63,11 +63,14 @@ public class JumpInvokeHandler implements InvocationHandler {
             putParamsToIntent(intent, key, arg, proxy, method);
         }
 
+
         if(context == null){
             throw new JumpException(JumpException.JumpExpType.NoneContext, proxy, method);
         }
         //final: 最终的
         android.content.Intent finalIntent = putContextTargetToIntent(intent, context, targetAct);
+        if(intentAnno.parseId() != 0)
+            finalIntent.putExtra(Intent.PARSE_ID, intentAnno.parseId());
 
         if(intentAnno.jumpType() == JumpType.StartAct){
             context.startActivity(finalIntent);

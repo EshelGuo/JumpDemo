@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Intent {
+    String PARSE_ID = "JUMP_PARSEID";
     /**
      * 使用 MemoryIntent 或者 Intent
      */
@@ -33,4 +34,9 @@ public @interface Intent {
      * 如果跳转方式为 startActivityForResult 则需要 requestCode
      */
     int requestCode() default 0;
+
+    /**
+     * 此处如果指定ID, 则在调用 JumpUtil.parseIntent() 时会执行 带注解 IntentParser(id = 1)并对应ID的方法
+     */
+    int parseId() default 0;
 }
