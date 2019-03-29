@@ -30,6 +30,9 @@ Jump
 		void jumpLogin();//立即跳转
 		Call jumpLogin();//不立即跳转(call.interceptor().join(Call).jump())
 	}
+	日志:
+		仿照 WXAPI, 提供 LogAdapter 使框架使用者可以拦截日志
+
 
 Anno:
 	@Intent
@@ -49,10 +52,47 @@ Anno:
 
 
 步骤:
+	日志系统 -- ILogAdapter -- AndroidLogImpl -- Log(框架中使用此类打印日志)  -- 扩展: XXXLogAdapter implements ILogAdapter{}
+	IntentBuilder(){
+		IntentBuilder(IntentType type)
+		getFinalIntent();
+	}
 
-	invoke			--  执行 InvocationHandler 中的 invoke 方法
+
+	invoke							--  执行 InvocationHandler 中的 invoke 方法
 	  ↓
-  parseMethod()
+IntentBuilder parseMethod()			--	解析方法上的注解
+	  ↓
+Intent getIntentAnno()				--  获得Intent注解
+	  ↓
+  getIntentType()					--  获取 Intent 类型用于创建 IntentBuilder()
+	  ↓
+new IntentBuilder()	--  创建该类用于将解析后的参数添加到 Intent 中
+	  ↓
+String parseAction(Intent)
+	  ↓
+String[] parseCategory(Intent)
+	  ↓
+String parseType(Intent)
+	  ↓
+Class parseTarget(Intent)
+	  ↓
+JumpType parseJumpType(Intent)
+	  ↓
+int parseRequestCode(Intent)
+	  ↓
+int parseParseId(Intent)
+	  ↓
+  parseParams()			--  解析参数
+	  ↓
+  
+	  ↓
+	  
+	  ↓
+	  
+	  ↓
+	  
+	  ↓
 	  ↓
   
 
