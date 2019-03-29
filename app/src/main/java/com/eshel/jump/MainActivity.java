@@ -1,5 +1,6 @@
 package com.eshel.jump;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -65,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 }
             }
         });
+    /*    Intent intent = new Intent(MainActivity.class);
+        intent.setAction();
+        intent.addCategory();
+        intent.addFlags();
+        intent.putExtra();
+        intent.setData();
+
+        intent.setClass();
+        intent.setClassName();
+        intent.setType();*/
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override

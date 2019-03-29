@@ -20,6 +20,14 @@ public @interface Intent {
      */
     IntentType intentType() default IntentType.Intent;
 
+    String[] extraKey() default {""};
+    String[] extraValue() default {""};
+    String action() default "";
+    String[] category() default {""};
+    int[] flag() default {0};
+    Class<? extends Activity> targetActivity() default Activity.class;
+    String targetActivityName() default "";//包名+类名
+    String type() default "";
     /**
      * 目标 Activity
      */
