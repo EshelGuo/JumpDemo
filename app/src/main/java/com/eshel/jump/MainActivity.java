@@ -1,6 +1,8 @@
 package com.eshel.jump;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -11,6 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.eshel.jump.anno.Action;
+import com.eshel.jump.anno.Category;
+import com.eshel.jump.anno.ExtraParams;
+import com.eshel.jump.anno.Flag;
+import com.eshel.jump.anno.Type;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -66,16 +74,18 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 }
             }
         });
-    /*    Intent intent = new Intent(MainActivity.class);
-        intent.setAction();
-        intent.addCategory();
-        intent.addFlags();
+        Intent intent = new Intent(MainActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra();
         intent.setData();
 
+        IntentFilter filter = new IntentFilter();
+
         intent.setClass();
         intent.setClassName();
-        intent.setType();*/
+        intent.setType("text/plain");
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +101,14 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         });
     }
 
+    @Type
+    @Flag
+    @Action
+    @Category
+    @ExtraParams(
+            key   = "aaa",
+            value = "vvv"
+    )
     private void findView() {
         mButton = findViewById(R.id.button);
         mRg_types = findViewById(R.id.rg_types);
