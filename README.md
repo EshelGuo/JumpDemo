@@ -1,3 +1,4 @@
+##JumpLib的目的
 说起跳转Activity, 那肯定离不开 Intent, 那么我们平时怎么书写Activity显示跳转呢?
 我们可能会这么写:
 
@@ -69,3 +70,8 @@ JumpFactory 是Demo中的一个类:
 那么 A 通过这种方式跳转到 BActivity, B 要怎么获取这些参数呢? JumpLib 库提供了这样的方式来解析 Intent 中的参数, 如下图所示, 我们首先定义方法 parseIntent(方法名随意取), 需要给方法加上 **@IntentParser** 的注解, 其中 intentType 是你跳转的传参方式, id 即 调用 `JumpUtil.parseIntent()`  传入的id, **@Params** 注解中的值即 使用 Jump 接口方法中相同注解的值.
 ![](https://i.imgur.com/ZRFXX3R.png)
 如上图, 在B Activity 中的onCreate() 方法调用 `JumpUtil.parseIntent()` 方法, 就会执行被`@IntentParser` 所标注的对应ID的方法, 在该方法中就是 A要传递给B的参数.
+
+##如何使用JumpLib? 
+在app moudle 的build.gradle中添加如下依赖:
+
+	implementation 'com.eshel.lib:jump:1.1.0'
