@@ -1,4 +1,5 @@
-##JumpLib的目的
+## JumpLib的目的
+
 说起跳转Activity, 那肯定离不开 Intent, 那么我们平时怎么书写Activity显示跳转呢?
 我们可能会这么写:
 
@@ -71,7 +72,8 @@ JumpFactory 是Demo中的一个类:
 ![](https://i.imgur.com/ZRFXX3R.png)
 如上图, 在B Activity 中的onCreate() 方法调用 `JumpUtil.parseIntent()` 方法, 就会执行被`@IntentParser` 所标注的对应ID的方法, 在该方法中就是 A要传递给B的参数.
 
-##如何使用JumpLib? 
+## 如何使用JumpLib? 
+
 在app moudle 的build.gradle中添加如下依赖:
 
 	implementation 'com.eshel.lib:jump:1.1.0'
