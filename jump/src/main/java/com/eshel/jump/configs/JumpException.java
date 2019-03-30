@@ -1,9 +1,11 @@
-package com.eshel.jump;
+package com.eshel.jump.configs;
 
 
 import java.lang.reflect.Method;
 
 public class JumpException extends RuntimeException{
+    public static final String MSG_INTERFACE_IS_NULL = "create()方法传入的接口.class 不能为空";
+
     public JumpException(JumpExpType type, Object interface_, Method method) {
         super(type.getAllMessage(interface_, method));
     }
@@ -16,7 +18,6 @@ public class JumpException extends RuntimeException{
      * 异常类型
      */
     public enum JumpExpType{
-
         HaveMethodNoIntentAnno("接口中有方法没有被[@Intent]注解修饰")
       , NoneContext("方法中没有上下文 [Context] 参数, 必须有一个没有被 [@Params] 修饰的 [Context] 参数")
       , TargetIsNull("要跳转的目标Activity为 null")

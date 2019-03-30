@@ -1,0 +1,104 @@
+Jump
+	功能 -- 跳转
+		startActivity
+			隐示跳转
+			显示跳转
+		startActivityForResult
+		sendBroadcastReceiver
+		startService
+
+方式: 
+	类似 Retrfit2, 注解+动态代理
+	
+扩展:
+	拦截器 仿照OKHttp框架
+		JumpInterceptor 跳转拦截
+		ParseInterceptor 解析接口参数时拦截 (方法注解和参数注解)
+	全局配置: 配置全局拦截器 
+	
+	解析器:  仿照 Gson 框架 解析参数时拦截
+		ParserAdapter <TYPE>{
+			int INTENT = 0b01;
+			int MEMORY_INTENT = 0b10;
+			ParserAdapter(){}
+			ParserAdapter(int type){}
+			Object putToIntent(TYPE obj){} 
+			TYPE parseFromIntent(Object params){}
+		}
+	
+	interface Jump{
+		void jumpLogin();//立即跳转
+		Call jumpLogin();//不立即跳转(call.interceptor().join(Call).jump())
+	}
+	日志:
+		仿照 WXAPI, 提供 LogAdapter 使框架使用者可以拦截日志
+
+
+Anno:
+	@Intent
+		targetType = Activity, 
+	
+	@IntentParser
+	
+	@Params
+	
+	@Flag 可用于参数, 可用于方法
+	@Action 同上
+	@Category 同上
+	@Type 同上
+	@TargetClass 同上
+	@TargetName 同上
+	@IntentFilter 用于注册广播等
+
+
+步骤:
+	日志系统 -- ILogAdapter -- AndroidLogImpl -- Log(框架中使用此类打印日志)  -- 扩展: XXXLogAdapter implements ILogAdapter{}
+	IntentBuilder(){
+		IntentBuilder(IntentType type)
+		getFinalIntent();
+	}
+
+
+	invoke							--  执行 InvocationHandler 中的 invoke 方法
+	  ↓
+IntentBuilder parseMethod()			--	解析方法上的注解
+	  ↓
+Intent getIntentAnno()				--  获得Intent注解
+	  ↓
+  getIntentType()					--  获取 Intent 类型用于创建 IntentBuilder()
+	  ↓
+new IntentBuilder()	--  创建该类用于将解析后的参数添加到 Intent 中
+	  ↓
+String parseAction(Intent)
+	  ↓
+String[] parseCategory(Intent)
+	  ↓
+String parseType(Intent)
+	  ↓
+Class parseTarget(Intent)
+	  ↓
+JumpType parseJumpType(Intent)
+	  ↓
+int parseRequestCode(Intent)
+	  ↓
+int parseParseId(Intent)
+	  ↓
+  parseParams()			--  解析参数
+	  ↓
+  
+	  ↓
+	  
+	  ↓
+	  
+	  ↓
+	  
+	  ↓
+	  ↓
+  
+
+
+
+
+
+
+

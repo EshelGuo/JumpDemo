@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 
 import com.eshel.jump.anno.IntentParser;
 import com.eshel.jump.anno.Params;
+import com.eshel.jump.configs.JumpException;
+import com.eshel.jump.enums.IntentType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -15,14 +17,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
+@Deprecated
 public class JumpUtil {
-    public static final String FLAG = "flag";
 
-    @SuppressWarnings("unchecked")
-    public static<T> T create(Class<T> clazz){
-        checkNull(clazz);
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new JumpInvokeHandler());
-    }
+
 
     /**
      * 调用后执行使用注解 @IntentParser 的对应 id 的方法
@@ -173,15 +171,9 @@ public class JumpUtil {
         return null;
     }
 
-    private static void checkNull(Object obj){
-        if(isNull(obj)){
-            throw new NullPointerException("object is null!!!");
-        }
-    }
 
-    private static boolean isNull(Object obj){
-        return obj == null;
-    }
+
+
 
     private static final int INT = 10;
     private static final int FLOAT = 11;

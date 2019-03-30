@@ -1,11 +1,17 @@
-package com.eshel.jump;
+package com.eshel.jump.invoke_handler;
 
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.eshel.jump.JumpUtil;
+import com.eshel.jump.MemoryIntent;
 import com.eshel.jump.anno.Intent;
 import com.eshel.jump.anno.Params;
+import com.eshel.jump.configs.JumpConst;
+import com.eshel.jump.configs.JumpException;
+import com.eshel.jump.enums.IntentType;
+import com.eshel.jump.enums.JumpType;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -22,7 +28,7 @@ public class JumpInvokeHandler implements InvocationHandler {
         Intent intentAnno = method.getAnnotation(Intent.class);
         //跳过接口中没有被 Intent 注解标注的类
         if(intentAnno == null){
-            Log.w(Const.TAG, JumpException.JumpExpType.HaveMethodNoIntentAnno.getAllMessage(proxy, method));
+            Log.w(JumpConst.TAG, JumpException.JumpExpType.HaveMethodNoIntentAnno.getAllMessage(proxy, method));
             return null;
         }
 
@@ -44,7 +50,7 @@ public class JumpInvokeHandler implements InvocationHandler {
         }
 
         Annotation[][] paramsAnnos = method.getParameterAnnotations();
-        Log.i(Const.TAG, paramsAnnos.length+" paramsAnnos length");
+        Log.i(JumpConst.TAG, paramsAnnos.length+" paramsAnnos length");
 
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
@@ -80,7 +86,7 @@ public class JumpInvokeHandler implements InvocationHandler {
                 throw new JumpException(JumpException.JumpExpType.ContextNotActivity, proxy, method);
             int requestCode = intentAnno.requestCode();
             if(requestCode == 0){
-                Log.w(Const.TAG, JumpException.JumpExpType.NoneRequestCode.getAllMessage(proxy, method));
+                Log.w(JumpConst.TAG, JumpException.JumpExpType.NoneRequestCode.getAllMessage(proxy, method));
             }
             activity.startActivityForResult(finalIntent, requestCode);
         }
@@ -108,7 +114,7 @@ public class JumpInvokeHandler implements InvocationHandler {
            else if(arg instanceof Serializable)
                ((android.content.Intent) intent).putExtra(key, (Serializable) arg);
            else {
-               Log.e(Const.TAG, arg.getClass().getSimpleName());
+               Log.e(JumpConst.TAG, arg.getClass().getSimpleName());
                throw new JumpException(JumpException.JumpExpType.ParamsNeedImplSerializable, proxy, method);
            }
         }
