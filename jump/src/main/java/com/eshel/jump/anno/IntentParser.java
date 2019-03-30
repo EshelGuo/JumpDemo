@@ -1,7 +1,7 @@
 package com.eshel.jump.anno;
 
 
-import com.eshel.jump.enums.IntentType;
+import com.eshel.jump.IntentType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

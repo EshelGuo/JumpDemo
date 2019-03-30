@@ -1,4 +1,4 @@
-package com.eshel.jump.configs;
+package com.eshel.jump;
 
 
 import java.lang.reflect.Method;

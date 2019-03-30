@@ -1,4 +1,4 @@
-package com.eshel.jump.enums;
+package com.eshel.jump;
 
 /**
  * Intent 保存数据类型 (intent.putExtral() 的数据, flag action 不由此管理)
