@@ -3,8 +3,9 @@ package com.eshel.jump.anno;
 import android.support.annotation.NonNull;
 
 import com.eshel.jump.configs.JumpConst;
-import com.eshel.jump.enums.JumpType;
 import com.eshel.jump.enums.IntentType;
+import com.eshel.jump.enums.JumpType;
+import com.eshel.jump.enums.Null;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,7 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import static com.eshel.jump.configs.JumpConst.NULL;
-import static com.eshel.jump.configs.JumpConst.NULL_C;
 import static com.eshel.jump.configs.JumpConst.NULL_I;
 
 @Target(ElementType.METHOD)
@@ -30,7 +30,7 @@ public @interface Intent {
      * 用于指定 Action
      * @return Intent.ACTION_XXXXXX
      */
-    String action() default "";
+    String action() default NULL;
 
     /**
      * @see Category
@@ -51,7 +51,7 @@ public @interface Intent {
     /**
      * 目标 Activity 目标服务, 目标广播 的 Class
      */
-    @NonNull Class<? extends AContext> target() default NULL_C;
+    @NonNull Class target() default Null.class;
 
     /**
      * 目标的包名加类名
