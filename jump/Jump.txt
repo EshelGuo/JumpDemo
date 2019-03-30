@@ -13,7 +13,7 @@ Jump
 扩展:
 	拦截器 仿照OKHttp框架
 		JumpInterceptor 跳转拦截
-		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
+		ParseInterceptor 解析接口参数时拦截 (方法注解和参数注解)
 	全局配置: 配置全局拦截器 
 	
 	解析器:  仿照 Gson 框架 解析参数时拦截
@@ -52,7 +52,7 @@ Anno:
 
 
 步骤:
-	日志系统 -- ILog -- AndroidLogImpl -- Log(框架中使用此类打印日志)  -- 扩展: XXXLogAdapter implements ILogAdapter{}
+	日志系统 -- ILogAdapter -- AndroidLogImpl -- Log(框架中使用此类打印日志)  -- 扩展: XXXLogAdapter implements ILogAdapter{}
 	IntentBuilder(){
 		IntentBuilder(IntentType type)
 		getFinalIntent();
