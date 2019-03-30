@@ -11,13 +11,5 @@ public enum JumpType {
     /**
      * startActivityForResult()
      */
-    StartActForResult,
-    /**
-     * 发送广播
-     */
-    SendBroadcastReceiver,
-    /**
-     * 开启服务
-     */
-    StartService
+    StartActForResult
 }
