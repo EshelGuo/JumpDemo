@@ -1,4 +1,4 @@
-package com.eshel.jump.invoke_handler;
+package com.eshel.jump;
 
 import android.app.Activity;
 import android.content.Context;

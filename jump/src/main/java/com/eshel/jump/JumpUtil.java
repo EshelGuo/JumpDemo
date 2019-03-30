@@ -20,8 +20,6 @@ import java.lang.reflect.Proxy;
 @Deprecated
 public class JumpUtil {
 
-
-
     /**
      * 调用后执行使用注解 @IntentParser 的对应 id 的方法
      * @param target 带@IntentParser注解的方法所在的类的对象
