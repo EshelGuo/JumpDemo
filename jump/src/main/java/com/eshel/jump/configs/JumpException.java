@@ -1,6 +1,8 @@
 package com.eshel.jump.configs;
 
 
+import com.eshel.jump.ProxyInfo;
+
 import java.lang.reflect.Method;
 
 public class JumpException extends RuntimeException{
@@ -12,6 +14,10 @@ public class JumpException extends RuntimeException{
 
     public JumpException(JumpExpType type) {
         super(type.message);
+    }
+
+    public JumpException(ProxyInfo proxyInfo, String msg) {
+        super(msg+proxyInfo.toString());
     }
 
     /**

@@ -72,5 +72,5 @@ public @interface Intent {
      * todo v2.0 待实现
      * 此处如果指定ID, 则在调用 JumpUtil.parseIntent() 时会执行 带注解 IntentParser(id = 1)并对应ID的方法
      */
-    int parseId() default NULL_I;
+    int parseId() default 0;
 }

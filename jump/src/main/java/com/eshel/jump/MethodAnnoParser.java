@@ -1,7 +1,9 @@
 package com.eshel.jump;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import com.eshel.jump.anno.AContext;
 import com.eshel.jump.anno.Action;
 import com.eshel.jump.anno.Category;
 import com.eshel.jump.anno.ExtraParams;
@@ -11,6 +13,11 @@ import com.eshel.jump.anno.TargetClass;
 import com.eshel.jump.anno.TargetName;
 import com.eshel.jump.anno.Type;
 import com.eshel.jump.enums.Null;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.eshel.jump.configs.JumpConst.NULL;
 import static com.eshel.jump.configs.JumpConst.NULL_I;
@@ -164,5 +171,122 @@ public class MethodAnnoParser {
 			}
 		}
 		return bundle;
+	}
+
+	public int parseParamsFlag(Flag flagAnno1, Class<?> paramsType, Object arg) {
+		if(flagAnno1 == null || arg == null)
+			return 0;
+		if(arg instanceof Integer || int.class.isInstance(arg)){
+			return (int) arg;
+		}
+
+		int flag = 0;
+		if(int[].class.isInstance(arg)){
+			int[] flagArray = (int[]) arg;
+			for (int temp : flagArray) {
+				flag |= temp;
+			}
+			return flag;
+		}
+
+		if(arg instanceof Collection){
+			Collection flags = (Collection) arg;
+			Iterator it = flags.iterator();
+			int temp;
+			while (it.hasNext()){
+				Object next = it.next();
+				if(next instanceof Integer || int.class.isInstance(next)){
+					temp = (int) next;
+					flag |= temp;
+				}else {
+					return 0;
+				}
+			}
+			return flag;
+		}
+		return 0;
+	}
+
+	public Context parseParamsContext(IntentBuilder builder, AContext contextAnno, Class<?> type, Object arg) {
+		if(contextAnno == null){
+			if(arg instanceof Context){
+				if(builder.getContext() == null){
+					return (Context) arg;
+				}
+			}
+		}else {
+			if(arg instanceof Context)
+				return (Context) arg;
+		}
+		return null;
+	}
+
+	public String parseParamsAction(Action actionAnno, Class<?> type, Object arg) {
+		if(actionAnno == null)
+			return null;
+
+		if(arg instanceof String){
+			return (String) arg;
+		}
+
+		return null;
+	}
+
+	public String parseParamsType(Type typeAnno, Class<?> type, Object arg) {
+		if(typeAnno == null)
+			return null;
+
+		if(arg instanceof String)
+			return (String) arg;
+
+		return null;
+	}
+
+	public Class parseParamsTargetClass(TargetClass targetClassAnno, Class<?> type, Object arg) {
+		if(targetClassAnno == null)
+			return null;
+
+		if(arg instanceof Class)
+			return (Class) arg;
+
+		return null;
+	}
+
+	public String parseParamsTargetName(TargetName targetNameAnno, Class<?> type, Object arg) {
+		if(targetNameAnno == null)
+			return null;
+
+		if(arg instanceof String)
+			return (String) arg;
+
+		return null;
+	}
+
+	public String[] parseParamsCategory(Category categoryAnno, Class<?> type, Object arg) {
+		if(categoryAnno == null)
+			return null;
+
+		if(arg instanceof String)
+			return new String[]{(String) arg};
+
+		if(String[].class.isInstance(arg))
+			return (String[]) arg;
+
+		if(arg instanceof Collection){
+			Collection list = (Collection) arg;
+			try{
+				return (String[]) list.toArray(new String[list.size()]);
+			} catch (Exception e){
+				Iterator it = list.iterator();
+				List<String> categorys = new ArrayList<>(list.size());
+				while (it.hasNext()){
+					Object next = it.next();
+					if(next instanceof String)
+						categorys.add((String) next);
+				}
+				return categorys.toArray(new String[categorys.size()]);
+			}
+		}
+		return null;
 	}
 }

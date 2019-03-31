@@ -15,8 +15,10 @@ import java.lang.annotation.Target;
  *     void jumpLogin0(@AContext(ContextType.Context) Activity context);
  *
  *     @Intent()
- *     void jumpLogin(Context context, @TargetName String login_package_name);
+ *     void jumpLogin(Context context, @TargetName String login_class_name);
  * }
+ * 等同于:
+ * startActivity(new Intent(context, login_class_name));
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
