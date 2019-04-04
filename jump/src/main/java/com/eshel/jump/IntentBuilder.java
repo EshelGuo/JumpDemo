@@ -30,7 +30,6 @@ public class IntentBuilder {
 
 	protected JumpType mJumpType;
 	protected int mRequestCode;
-	protected int mParseId;
 	private IntentType mIntentType;
 
 	final void setProxyInfo(ProxyInfo proxyInfo){
@@ -145,7 +144,7 @@ public class IntentBuilder {
 	}
 
 	public void setParseId(int parseId) {
-		mParseId = parseId;
+		mIntent.putExtra(com.eshel.jump.anno.Intent.PARSE_ID, parseId);
 	}
 
 	public Context getContext() {
