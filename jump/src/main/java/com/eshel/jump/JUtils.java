@@ -1,5 +1,10 @@
 package com.eshel.jump;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.ContextWrapper;
+
 import java.util.ArrayList;
 
 /**
@@ -48,5 +53,21 @@ public class JUtils {
             }
         }
         return result.toArray(new String[result.size()]);
+    }
+
+    public static Activity getActivityFromContext(Context context){
+        if(context instanceof Application)
+            return null;
+        while(true) {
+            if(context instanceof Activity)
+                return (Activity) context;
+            if(context instanceof ContextWrapper){
+                ContextWrapper cw = (ContextWrapper) context;
+                context = cw.getBaseContext();
+            }else {
+                break;
+            }
+        }
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.eshel.jump;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -14,6 +16,7 @@ import com.eshel.jump.anno.TargetClass;
 import com.eshel.jump.anno.TargetName;
 import com.eshel.jump.anno.Type;
 import com.eshel.jump.configs.JConfig;
+import com.eshel.jump.configs.JumpException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,6 +31,8 @@ public final class Call {
 	private Method method;
 	private Object[] args;
 	private Annotation[] methodAnnos;
+
+	private volatile boolean isCancel;
 
 	private ProxyInfo mProxyInfo;
 
@@ -52,8 +57,14 @@ public final class Call {
 		return sb.toString();
 	}
 
+	public void cancel(){
+		isCancel = true;
+	}
+
 	public void execute(){
 		if(args == null || args.length == 0)
+			return;
+		if(isCancel)
 			return;
 
 		AnnoProvider ap = new AnnoProvider();
@@ -98,9 +109,39 @@ public final class Call {
 		builder.setMethodExtra(params);
 
 		parseMethodParams(ap, parser, builder);
+
+		invokeIntent(builder);
+	}
+
+	private void invokeIntent(IntentBuilder builder) {
+		android.content.Intent finalIntent = builder.build();
+		Context context = builder.getContext();
+		if(isCancel)
+			return;
+		switch (builder.mJumpType){
+			case StartAct:
+				if(context instanceof Application)
+					finalIntent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(finalIntent);
+				break;
+			case StartActForResult:
+				Activity activity = JUtils.getActivityFromContext(context);
+				if(activity == null)
+					throw new JumpException(mProxyInfo, "使用 startActivityForResult() 跳转Activity提供的Context必须是Activity");
+				activity.startActivityForResult(finalIntent, builder.mRequestCode);
+				break;
+			case StartService:
+				context.startService(finalIntent);
+				break;
+			case SendBroadcastReceiver:
+				context.sendBroadcast(finalIntent);
+				break;
+		}
 	}
 
 	private void parseMethodParams(AnnoProvider ap, MethodAnnoParser parser, IntentBuilder builder) {
+		if(isCancel)
+			return;
 		Annotation[][] paramsAnnos = method.getParameterAnnotations();
 		Class<?>[] paramsTypes = method.getParameterTypes();
 		for (int i = 0; i < args.length; i++) {

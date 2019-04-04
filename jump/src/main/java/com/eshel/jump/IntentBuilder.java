@@ -15,9 +15,10 @@ import java.io.Serializable;
 /**
  * createBy Eshel
  * createTime: 2019/3/30 14:52
- * desc: TODO
  */
 public class IntentBuilder {
+
+	public static final String KEY_MEMORY_INTENT_HASH_CODE = "KEY_MEMORY_INTENT_HASH_CODE";
 	protected ProxyInfo mProxyInfo;
 
 	protected Intent mIntent;
@@ -47,6 +48,12 @@ public class IntentBuilder {
 	}
 
 	public Intent build(){
+		if (mMemoryIntent != null){
+			int hashCode = mMemoryIntent.hashCode();
+			String hashCodeS = String.valueOf(hashCode);
+			MemoryIntent.sendIntent(hashCodeS, mMemoryIntent);
+			mIntent.putExtra(KEY_MEMORY_INTENT_HASH_CODE, hashCodeS);
+		}
 		return mIntent;
 	}
 
