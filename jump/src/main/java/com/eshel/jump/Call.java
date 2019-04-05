@@ -42,19 +42,7 @@ public final class Call {
 		this.args = args;
 		this.methodAnnos = methodAnnos;
 		Class<?>[] proxyInterfaces = proxy.getClass().getInterfaces();
-		mProxyInfo = new ProxyInfo(getInterfacesName(proxyInterfaces), method.getName());
-	}
-
-	private String getInterfacesName(Class<?>[] proxyInterfaces) {
-		if(proxyInterfaces == null || proxyInterfaces.length == 0)
-			return "";
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < proxyInterfaces.length; i++) {
-			if(i != 0)
-				sb.append(", ");
-			sb.append(proxyInterfaces[i].getName());
-		}
-		return sb.toString();
+		mProxyInfo = new ProxyInfo(proxyInterfaces, method.getName());
 	}
 
 	public void cancel(){

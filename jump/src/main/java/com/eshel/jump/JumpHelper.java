@@ -1,8 +1,19 @@
 package com.eshel.jump;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+
+import com.eshel.jump.anno.IntentParser;
+import com.eshel.jump.anno.Params;
 import com.eshel.jump.configs.JConfig;
 import com.eshel.jump.configs.JumpException;
+import com.eshel.jump.enums.IntentType;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
 /**
@@ -25,5 +36,50 @@ public class JumpHelper {
 
     public static JConfig getConfig(){
         return sConfig;
+    }
+
+    /**
+     * @IntentParser(intentType = IntentType.MemoryIntent, id = 2)
+     * @param id id为 @IntentParser 中的id
+     * @param target 即 @IntentParser 注解的方法所在类
+     * @param intent 需要 activity.getIntent(), 不能为空
+     * @param needRecycleMemoryIntent 如果使用MemoryIntent该参数有效(使用Intent可以忽略该参数) , 即解析完MemoryIntent后是否回收MemoryIntent, 如果被回收则无法进行二次解析
+     *                    例如:
+     *                          parseIntent(1, this, getIntent(), true);//第一次被回收
+     *                          parseIntent(1, this, getIntent(), true);//此次解析不到MemoryIntent, 因为他已经被回收释放.
+     *                    正确写法:
+     *                          parseIntent(1, this, getIntent(), false);//第一次不回收
+     *                          parseIntent(1, this, getIntent(), true);//第二次用完回收 MemoryIntent.
+     *
+     */
+    public static void parseIntent(int id,@NonNull Object target, @NonNull Intent intent, boolean needRecycleMemoryIntent){
+        JUtils.checkNull(target, "解析 Intent 时 target 不能为 null");
+        JUtils.checkNull(intent, "解析 Intent 时 intent 不能为 null");
+        IntentParserImpl.parseIntentInternal(id, target, intent, needRecycleMemoryIntent);
+    }
+
+    /**
+     * 调用后执行使用注解 @IntentParser 的对应 id 的方法
+     * 如果 IntentType 为 MemoryIntent, 则回收MemoryIntent对象
+     * @param target 带@IntentParser注解的方法所在的类的对象
+     * @param intent 使用 activity.getIntent();
+     */
+    public static void parseIntent(Object target, @NonNull Intent intent){
+        int id = intent.getIntExtra(com.eshel.jump.anno.Intent.PARSE_ID, 0);
+        parseIntent(id, target, intent);
+    }
+
+    public static void parseIntent(int id, Object target, @NonNull Intent intent){
+        parseIntent(id, target, intent, true);
+    }
+
+    /**
+     * 判断 flags 是否包含 flag
+     * @param flags {@link Intent#getFlags() }
+     * @param flag  {@link Intent#FLAG_ACTIVITY_CLEAR_TOP ...}
+     * @return flags 包含 flag 返回 true ,否则返回 false
+     */
+    public static boolean hasFlag(int flags, int flag){
+        return (flags & flag) != 0;
     }
 }

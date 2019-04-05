@@ -14,7 +14,10 @@ Jump
 	拦截器 仿照OKHttp框架
 		JumpInterceptor 跳转拦截
 		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
-	全局配置: 配置全局拦截器 
+	全局配置: 配置全局拦截器
+
+    扩展 IntentParser 支持的数组(List)类型
+	超链接跳转: JumpRoute
 	
 	解析器:  仿照 Gson 框架 解析参数时拦截
 		ParserAdapter <TYPE>{

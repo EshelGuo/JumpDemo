@@ -1,6 +1,9 @@
 package com.eshel.jump.log;
 
+import android.util.Log;
+
 import com.eshel.jump.configs.JConfig;
+import com.eshel.jump.configs.JumpConst;
 
 /**
  * createBy Eshel
@@ -27,5 +30,10 @@ public class JLog {
 
 	public static void e(String tag, String msg) {
 		JConfig.getInstance().getLogImpl().e(tag, msg);
+	}
+
+	public static void printStackTrace(Throwable throwable){
+		String stackTraceString = Log.getStackTraceString(throwable);
+		e(JumpConst.TAG, stackTraceString);
 	}
 }

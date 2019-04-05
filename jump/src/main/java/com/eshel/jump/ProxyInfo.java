@@ -10,9 +10,25 @@ public class ProxyInfo {
 	private String proxyInterfacesName;
 	private String methodName;
 
+	public ProxyInfo(Class<?>[] proxyInterfacesName, String methodName) {
+		this.proxyInterfacesName = getInterfacesName(proxyInterfacesName);
+		this.methodName = methodName;
+	}
 	public ProxyInfo(String proxyInterfacesName, String methodName) {
 		this.proxyInterfacesName = proxyInterfacesName;
 		this.methodName = methodName;
+	}
+
+	private String getInterfacesName(Class<?>[] proxyInterfaces) {
+		if(proxyInterfaces == null || proxyInterfaces.length == 0)
+			return "";
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < proxyInterfaces.length; i++) {
+			if(i != 0)
+				sb.append(", ");
+			sb.append(proxyInterfaces[i].getName());
+		}
+		return sb.toString();
 	}
 
 	public String getProxyInterfacesName() {
