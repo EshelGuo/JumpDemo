@@ -33,7 +33,8 @@ public class JumpException extends RuntimeException{
       , ContextNotActivity("使用注解[@Intent(jumpType = JumpType.StartActForResult)]时, 提供的 [Context] 必须是一个 Activity")
       , NoneRequestCode("使用[@Intent(jumpType = JumpType.StartActForResult)]方式跳转Activity但是没有提供 requestCode, 需要这样提供: [@Intent(jumpType = JumpType.StartActForResult, requestCode = 1001)]")
       , NoneIntentParser("使用了 JumpHelper.parseIntent() ,但调用的类中没有方法使用[@IntentParser]注解标注, 故该调用无效")
-      ;
+      , InvokeParseIntentIsNull("使用了 JumpUtil.parseIntent()但传入的Intent是null")
+      , AnnoParamsLenthUnlikeness("注解和参数长度不相等, 请检查:")  ;
         public String message;
 
         JumpExpType(String message) {

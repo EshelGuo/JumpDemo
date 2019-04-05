@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.eshel.jump.JumpUtil;
-import com.eshel.jump.MemoryIntent;
 import com.eshel.jump.anno.Intent;
 import com.eshel.jump.anno.Params;
 import com.eshel.jump.configs.JumpConst;
 import com.eshel.jump.configs.JumpException;
 import com.eshel.jump.enums.IntentType;
 import com.eshel.jump.enums.JumpType;
+import com.eshel.jump.log.JLog;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -28,7 +27,7 @@ public class JumpInvokeHandler implements InvocationHandler {
         Intent intentAnno = method.getAnnotation(Intent.class);
         //跳过接口中没有被 Intent 注解标注的类
         if(intentAnno == null){
-            Log.w(JumpConst.TAG, JumpException.JumpExpType.HaveMethodNoIntentAnno.getAllMessage(proxy, method));
+            JLog.w(JumpConst.TAG, JumpException.JumpExpType.HaveMethodNoIntentAnno.getAllMessage(proxy, method));
             return null;
         }
 
@@ -50,11 +49,12 @@ public class JumpInvokeHandler implements InvocationHandler {
         }
 
         Annotation[][] paramsAnnos = method.getParameterAnnotations();
-        Log.i(JumpConst.TAG, paramsAnnos.length+" paramsAnnos length");
-
+        JLog.i(JumpConst.TAG, paramsAnnos.length+" paramsAnnos length");
+        AnnoProvider ap = new AnnoProvider();
         for (int i = 0; i < args.length; i++) {
+            ap.initParser(paramsAnnos[i]);
             Object arg = args[i];
-            Params annotation = JumpUtil.getParamsAnno(paramsAnnos[i]);
+            Params annotation = ap.getParamsAnno();
             if(arg instanceof Context && context == null && annotation == null){
                 context = (Context) arg;
                 continue;
@@ -69,24 +69,21 @@ public class JumpInvokeHandler implements InvocationHandler {
             putParamsToIntent(intent, key, arg, proxy, method);
         }
 
-
         if(context == null){
             throw new JumpException(JumpException.JumpExpType.NoneContext, proxy, method);
         }
         //final: 最终的
         android.content.Intent finalIntent = putContextTargetToIntent(intent, context, targetAct);
-        if(intentAnno.parseId() != 0)
-            finalIntent.putExtra(Intent.PARSE_ID, intentAnno.parseId());
 
         if(intentAnno.jumpType() == JumpType.StartAct){
             context.startActivity(finalIntent);
         }else if(intentAnno.jumpType() == JumpType.StartActForResult){
-            Activity activity = JumpUtil.getActivity(context);
+            Activity activity = JUtils.getActivityFromContext(context);
             if(activity == null)
                 throw new JumpException(JumpException.JumpExpType.ContextNotActivity, proxy, method);
             int requestCode = intentAnno.requestCode();
             if(requestCode == 0){
-                Log.w(JumpConst.TAG, JumpException.JumpExpType.NoneRequestCode.getAllMessage(proxy, method));
+                JLog.w(JumpConst.TAG, JumpException.JumpExpType.NoneRequestCode.getAllMessage(proxy, method));
             }
             activity.startActivityForResult(finalIntent, requestCode);
         }
@@ -97,7 +94,7 @@ public class JumpInvokeHandler implements InvocationHandler {
         android.content.Intent intent = null;
         if(intentO instanceof MemoryIntent){
             intent = new android.content.Intent(context, targetAct);
-            MemoryIntent.sendIntent(targetAct, (MemoryIntent) intentO);
+            MemoryIntent.sendIntent(targetAct.getName(), (MemoryIntent) intentO);
         }else if(intentO instanceof android.content.Intent){
             intent = (android.content.Intent) intentO;
             intent.setClass(context, targetAct);
@@ -114,7 +111,7 @@ public class JumpInvokeHandler implements InvocationHandler {
            else if(arg instanceof Serializable)
                ((android.content.Intent) intent).putExtra(key, (Serializable) arg);
            else {
-               Log.e(JumpConst.TAG, arg.getClass().getSimpleName());
+               JLog.e(JumpConst.TAG, arg.getClass().getSimpleName());
                throw new JumpException(JumpException.JumpExpType.ParamsNeedImplSerializable, proxy, method);
            }
         }
