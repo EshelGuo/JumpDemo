@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -46,7 +46,7 @@ ext {
     siteUrl = 'https://github.com/EshelGuo/JumpDemo'
     gitUrl = 'https://github.com/EshelGuo/JumpDemo.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '2.0'
 
     developerId = 'eshel'
     developerName = 'eshel'
