@@ -166,7 +166,8 @@ public final class Call {
 			builder.setTargetName(targetName);
 
 			Params paramsAnno = ap.getParamsAnno();
-			builder.setParams(paramsAnno.value(), arg);
+			if(paramsAnno != null)
+				builder.setParams(paramsAnno.value(), arg);
 		}
 	}
 }

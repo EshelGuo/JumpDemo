@@ -1,13 +1,11 @@
 package com.eshel.jump;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.eshel.jump.anno.IntentParser;
 import com.eshel.jump.anno.Params;
+import com.eshel.jump.configs.JumpConst;
 import com.eshel.jump.configs.JumpException;
 import com.eshel.jump.enums.IntentType;
 
@@ -17,9 +15,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
+/**
+ * 以弃用, 请使用 {@link JumpHelper}
+ */
+@Deprecated
 public class JumpUtil {
-    public static final String FLAG = "flag";
-
     @SuppressWarnings("unchecked")
     public static<T> T create(Class<T> clazz){
         JUtils.checkNull(clazz, JumpException.MSG_INTERFACE_IS_NULL);
@@ -55,7 +55,7 @@ public class JumpUtil {
     }
 
     public static void parseIntent(int id, Object target, @NonNull Intent intent){
-        parseIntent(id, target, intent, false);
+        parseIntent(id, target, intent, true);
     }
 
     /**
@@ -133,7 +133,7 @@ public class JumpUtil {
                 param = intent.getSerializableExtra(anno.value());
             }else if(targetAnno.intentType() == IntentType.MemoryIntent){
                 if(intentM == null)
-                    intentM = MemoryIntent.getIntent(target.getClass().getName());
+                    intentM = MemoryIntent.getIntent(getMemoryIntentKey(intent));
 
                 param = intentM.load(anno.value(), Object.class);
             }
@@ -154,6 +154,11 @@ public class JumpUtil {
         }
     }
 
+    private static String getMemoryIntentKey(Intent intent) {
+        String hashCode = String.valueOf(intent.hashCode());
+        return intent.getStringExtra(IntentBuilder.KEY_MEMORY_INTENT_HASH_CODE);
+    }
+
     private static final int INT = 10;
     private static final int FLOAT = 11;
     private static final int STRING = 12;
@@ -163,10 +168,14 @@ public class JumpUtil {
         if(intent != null) {
             switch (type){
                 case INT:
-                    flag = intent.getIntExtra(key, 0);
+                    flag = intent.getIntExtra(key, JumpConst.NULL_I);
+                    if(((int)flag) == JumpConst.NULL_I)
+                        flag = null;
                     break;
                 case FLOAT:
-                    flag = intent.getFloatExtra(key, 0);
+                    flag = intent.getFloatExtra(key, JumpConst.NULL_F);
+                    if(((float)flag) == JumpConst.NULL_F)
+                        flag = null;
                     break;
                 case STRING:
                     flag = intent.getStringExtra(key);
@@ -182,13 +191,14 @@ public class JumpUtil {
                 return (T) flag;
             }else if(flag instanceof String)
                 return (T) flag;
-            else
-                return (T) flag;
         }
-        MemoryIntent memoryIntent = MemoryIntent.getIntent(target.getClass().getName());
-        if(memoryIntent != null)
-            flag = memoryIntent.load(key, Object.class);
-        return (T) flag;
+        if(flag == null) {
+            MemoryIntent memoryIntent = MemoryIntent.getIntent(getMemoryIntentKey(intent));
+            if (memoryIntent != null)
+                flag = memoryIntent.load(key, Object.class);
+            return (T) flag;
+        }
+        return null;
     }
 
     public static float getFlagFloat(Object target, Intent intent, String key) {

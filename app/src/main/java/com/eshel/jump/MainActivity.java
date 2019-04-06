@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 }
             }
         });
-        Intent intent = new Intent(MainActivity.class);
+        /*Intent intent = new Intent(MainActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         intent.setClass();
         intent.setClassName();
-        intent.setType("text/plain");
+        intent.setType("text/plain");*/
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override

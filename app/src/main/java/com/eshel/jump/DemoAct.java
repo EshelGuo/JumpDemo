@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.eshel.jump.anno.IntentParser;
 import com.eshel.jump.anno.Params;
+import com.eshel.jump.enums.IntentType;
 
 import java.util.Locale;
 

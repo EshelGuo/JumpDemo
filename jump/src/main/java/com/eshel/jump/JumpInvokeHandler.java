@@ -94,7 +94,9 @@ public class JumpInvokeHandler implements InvocationHandler {
         android.content.Intent intent = null;
         if(intentO instanceof MemoryIntent){
             intent = new android.content.Intent(context, targetAct);
-            MemoryIntent.sendIntent(targetAct.getName(), (MemoryIntent) intentO);
+            String hashCode = String.valueOf(intent.hashCode());
+            intent.putExtra(IntentBuilder.KEY_MEMORY_INTENT_HASH_CODE, hashCode);
+            MemoryIntent.sendIntent(hashCode, (MemoryIntent) intentO);
         }else if(intentO instanceof android.content.Intent){
             intent = (android.content.Intent) intentO;
             intent.setClass(context, targetAct);

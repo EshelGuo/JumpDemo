@@ -6,7 +6,7 @@ public class JumpFactory {
 
     public static Jump getJump(){
         if(mJump == null)
-            mJump = JumpUtil.create(Jump.class);
+            mJump = JumpHelper.create(Jump.class);
         return mJump;
     }
 }

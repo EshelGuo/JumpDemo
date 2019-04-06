@@ -18,7 +18,7 @@ public interface Jump {
 
     @Intent(target = DemoAct.class, intentType = IntentType.Intent)
     void jumpDemoActForBeanS(Context context, @Params("Float") float pFloat, @Params("BeanS") BeanS bean);
-
+/*
     @Intent(target = DemoAct.class)
-    void v2_0test(@AContext Context context, @Flag int flag, @Action String action);
+    void v2_0test(@AContext Context context, @Flag int flag, @Action String action);*/
 }
