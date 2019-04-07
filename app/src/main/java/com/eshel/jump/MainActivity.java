@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             @Override
             public void onClick(View v) {
                 if(mFloat == 0){
-                    JumpFactory.getJump().jumpDemoActForBean(v.getContext(), mFloat, new Bean(mString, mInt));
+                    Call call = JumpFactory.getJump().jumpDemoActForBean(v.getContext(), mFloat, new Bean(mString, mInt));
+                    call.execute();
                 }else if(mFloat == 1){
                     JumpFactory.getJump().jumpDemoActForBeanS(v.getContext(), mFloat, new BeanS(mString, mInt));
                 }else {

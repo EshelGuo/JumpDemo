@@ -15,6 +15,7 @@ public class MemoryIntent {
     public MemoryIntent(){
         mDatas = new ArrayMap<>();
     }
+
     public static MemoryIntent getIntent(String key){
         return intents.get(key);
     }
@@ -38,6 +39,10 @@ public class MemoryIntent {
     }
 
     private Map<String,Object> mDatas;
+
+    public Map<String,Object> getAll(){
+        return mDatas;
+    }
 
     public void save(String key, Object value){
         if(mDatas != null && key != null){

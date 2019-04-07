@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eshel.jump.anno.IntentParser;
 import com.eshel.jump.anno.Params;
@@ -29,6 +30,8 @@ public class DemoAct extends Activity {
         }else{
             JumpUtil.parseIntent(2, this, getIntent(), true);
         }
+
+        Toast.makeText(this,"jump://"+JUtils.base64Encode("com.eshel.MainActivity?title=你好&id=2&id=S_2"),Toast.LENGTH_LONG).show();
 //        JumpUtil.parseMemoryIntent(this/*, getIntent()*/);
     }
 

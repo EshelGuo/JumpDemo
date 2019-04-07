@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 2
-        versionName "2.0"
+        versionCode versionCode()
+        versionName versionName()
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -46,7 +46,7 @@ ext {
     siteUrl = 'https://github.com/EshelGuo/JumpDemo'
     gitUrl = 'https://github.com/EshelGuo/JumpDemo.git'
 
-    libraryVersion = '2.0'
+    libraryVersion = versionName()
 
     developerId = 'eshel'
     developerName = 'eshel'
@@ -61,3 +61,12 @@ ext {
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 apply plugin: 'com.github.dcendents.android-maven'
+
+
+static def versionCode(){
+    return 21
+}
+
+static def versionName(){
+    return "2.1"
+}

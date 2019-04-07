@@ -30,7 +30,7 @@ public class IntentBuilder {
 
 	protected JumpType mJumpType;
 	protected int mRequestCode;
-	private IntentType mIntentType;
+	protected IntentType mIntentType;
 
 	final void setProxyInfo(ProxyInfo proxyInfo){
 		mProxyInfo = proxyInfo;

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.eshel.jump.anno.AContext;
 import com.eshel.jump.anno.Action;
@@ -16,10 +17,20 @@ import com.eshel.jump.anno.TargetClass;
 import com.eshel.jump.anno.TargetName;
 import com.eshel.jump.anno.Type;
 import com.eshel.jump.configs.JConfig;
+import com.eshel.jump.configs.JumpConst;
 import com.eshel.jump.configs.JumpException;
+import com.eshel.jump.enums.IntentType;
+import com.eshel.jump.enums.JumpType;
+import com.eshel.jump.log.JLog;
+import com.eshel.jump.router.JumpURI;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * createBy Eshel
@@ -36,6 +47,9 @@ public final class Call {
 
 	private ProxyInfo mProxyInfo;
 
+	private JumpURI uri;
+	private Context context;
+
 	Call(Object proxy, Method method, Object[] args, Annotation[] methodAnnos) {
 		this.proxy = proxy;
 		this.method = method;
@@ -45,16 +59,133 @@ public final class Call {
 		mProxyInfo = new ProxyInfo(proxyInterfaces, method.getName());
 	}
 
+	public Call(Context context, JumpURI uri){
+		this.context = context;
+		this.uri = uri;
+	}
+
+	public JumpURI toUri(boolean base64Encode){
+		try {
+			if(uri != null)
+				return uri;
+			IntentBuilder builder = generateIntentBuilder();
+			String scheme = base64Encode ? JumpURI.SCHEME_JUMPS : JumpURI.SCHEME_JUMP;
+			String path = null;
+			Map<String, Serializable> params = null;
+
+			if(builder.targetClass != null)
+				path = builder.targetClass.getName();
+			if(path == null && builder.targetClassName != null)
+				path = builder.targetClassName;
+
+			if(path == null)
+				return null;
+			if(!(builder.mJumpType == JumpType.StartActForResult || builder.mJumpType == JumpType.StartAct))
+				return null;
+
+			android.content.Intent intent = builder.build();
+			if(builder.mIntentType == IntentType.MemoryIntent){
+				String memoryIntentKey = intent.getStringExtra(IntentBuilder.KEY_MEMORY_INTENT_HASH_CODE);
+				MemoryIntent memoryIntent = MemoryIntent.getIntent(memoryIntentKey);
+				Map<String,Object> paramMap = memoryIntent.getAll();
+				params = new HashMap<>(paramMap.size());
+				for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+					if(entry.getValue() instanceof Serializable)
+						params.put(entry.getKey(), (Serializable) entry.getValue());
+					else
+						return null;
+				}
+			}else {
+				Bundle extras = intent.getExtras();
+				params = new HashMap<>(extras.size());
+				for (String key : extras.keySet()) {
+					params.put(key, (Serializable) extras.get(key));
+				}
+			}
+
+			return new JumpURI(scheme, path, params);
+		}catch (Exception e){
+			JLog.printStackTrace(e);
+		}
+		return null;
+	}
+
 	public void cancel(){
 		isCancel = true;
 	}
 
 	public void execute(){
+		if(proxy != null)
+			executeFromProxyInternal();
+		else if(uri != null)
+			executeFromJumpUriInternal();
+	}
+
+	private void executeFromJumpUriInternal() {
+		IntentBuilder builder = JConfig.getInstance().getIntentBuilderProvider().provideIntentBuilder();
+		builder.setTargetName(uri.getPath());
+		builder.setContext(context);
+
+		Set<Map.Entry<String, Serializable>> entries = uri.getParams().entrySet();
+		Iterator<Map.Entry<String, Serializable>> it = entries.iterator();
+
+		while (it.hasNext()){
+			Map.Entry<String, Serializable> entry = it.next();
+			String key = entry.getKey();
+			Serializable value = entry.getValue();
+
+			if(key.equals(JumpConst.INTENT_TYPE) && value instanceof String){
+				String intentType = (String) value;
+				IntentType type = null;
+				if(intentType.equals(JumpConst.TYPE_INTENT))
+					type = IntentType.Intent;
+				else if(intentType.equals(JumpConst.TYPE_MEMORY_INTENT))
+					type = IntentType.MemoryIntent;
+				builder.setIntentType(type);
+			}else if(key.equals(JumpConst.FLAG) && (value instanceof Integer || int.class.isInstance(value))){
+				builder.addFlag((Integer) value);
+			}else if(key.equals(JumpConst.JUMP_TYPE) && value instanceof String){
+				JumpType type = null;
+				String jumpType = (String) value;
+				if(jumpType.equals(JumpConst.JUMP_TYPE_START_ACTIVITY))
+					type = JumpType.StartAct;
+				else if(jumpType.equals(JumpConst.JUMP_TYPE_START_ACTIVITY_FOR_RESULT))
+					type = JumpType.StartActForResult;
+				builder.setJumpType(type);
+			} else if(key.equals(JumpConst.REQUEST_CODE) && (value instanceof Integer || int.class.isInstance(value))){
+				int requestCode = (int) value;
+				builder.setRequestCode(requestCode);
+			}else if(key.equals(Intent.PARSE_ID) && (value instanceof Integer || int.class.isInstance(value))){
+				int parseId = (int) value;
+				builder.setParseId(parseId);
+			}else {
+				continue;
+			}
+			it.remove();
+		}
+
+		if(builder.mIntentType == null)
+			builder.mIntentType = IntentType.Intent;
+
+		for (Map.Entry<String, Serializable> entry : entries) {
+			builder.setParams(entry.getKey(), entry.getValue());
+		}
+
+		invokeIntent(builder);
+	}
+
+	private void executeFromProxyInternal() {
 		if(args == null || args.length == 0)
 			return;
 		if(isCancel)
 			return;
 
+		IntentBuilder builder = generateIntentBuilder();
+		invokeIntent(builder);
+	}
+
+	@NonNull
+	private IntentBuilder generateIntentBuilder() {
 		AnnoProvider ap = new AnnoProvider();
 		ap.initParser(methodAnnos);
 
@@ -97,8 +228,7 @@ public final class Call {
 		builder.setMethodExtra(params);
 
 		parseMethodParams(ap, parser, builder);
-
-		invokeIntent(builder);
+		return builder;
 	}
 
 	private void invokeIntent(IntentBuilder builder) {

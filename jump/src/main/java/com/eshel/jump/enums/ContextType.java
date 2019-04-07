@@ -26,16 +26,16 @@ public enum  ContextType {
      * 其次以 Context 解析
      */
     Context,
-    /**
+  /*  *//**
      * 必须以 Activity 解析
-     */
-    Activity,
-    /**
+     *//*
+    Activity,*/
+/*    *//**
      * 必须为 Fragment
-     */
+     *//*
     Fragment,
-    /**
+    *//**
      * 必须为 View
-     */
-    View
+     *//*
+    View*/
 }
