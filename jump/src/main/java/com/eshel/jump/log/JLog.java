@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.eshel.jump.configs.JConfig;
 import com.eshel.jump.configs.JumpConst;
+import com.eshel.jump.jump.BuildConfig;
 
 /**
  * createBy Eshel
@@ -12,12 +13,20 @@ import com.eshel.jump.configs.JumpConst;
  */
 public class JLog {
 
+	private static boolean isLogging = BuildConfig.DEBUG;
+
+	public static void openLog(){
+		isLogging = true;
+	}
+
 	public static void v(String tag, String msg) {
-		JConfig.getInstance().getLogImpl().v(tag, msg);
+		if(isLogging)
+			JConfig.getInstance().getLogImpl().v(tag, msg);
 	}
 
 	public static void d(String tag, String msg) {
-		JConfig.getInstance().getLogImpl().d(tag, msg);
+		if(isLogging)
+			JConfig.getInstance().getLogImpl().d(tag, msg);
 	}
 
 	public static void i(String tag, String msg) {

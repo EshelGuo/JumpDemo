@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             case R.id.btn_link:
                 String link = null;
                 try {
-                    link = "jump://com.eshel.jump.DemoAct?intentType=MemoryIntent&Int=22&Float=12.3f&String=\""+ URLEncoder.encode("http://www.baidu.com?user=gsw&test=你好", "GBK")+"\"";
+                    link = "jump://com.eshel.jump.DemoAct?intentType=MemoryIntent&Int=22&Float=12.3f&String=\""+ URLEncoder.encode("http://www.baidu.com?user=gsw&test=[{你好}]", "UTF-8")+"\"";
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

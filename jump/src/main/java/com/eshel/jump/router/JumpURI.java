@@ -230,7 +230,7 @@ public class JumpURI {
 				}
 			}
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 		return value;
 	}
@@ -248,7 +248,7 @@ public class JumpURI {
 				}
 			}
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 
 		if(value != null){
@@ -269,7 +269,7 @@ public class JumpURI {
 					return true;
 				}
 			}catch (Exception e){
-				JLog.printStackTrace(e);
+				JLog.printStackTraceD(e);
 			}
 		}
 		return false;
@@ -285,7 +285,7 @@ public class JumpURI {
 					return true;
 				}
 			}catch (Exception e){
-				JLog.printStackTrace(e);
+				JLog.printStackTraceD(e);
 			}
 		}
 		return false;
@@ -302,7 +302,7 @@ public class JumpURI {
 				return true;
 			}
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 		return false;
 	}
@@ -320,7 +320,7 @@ public class JumpURI {
 				return true;
 			}
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 		return false;
 	}
@@ -336,7 +336,7 @@ public class JumpURI {
 					return true;
 				}
 			}catch (Exception e){
-				JLog.printStackTrace(e);
+				JLog.printStackTraceD(e);
 			}
 		}
 		return false;

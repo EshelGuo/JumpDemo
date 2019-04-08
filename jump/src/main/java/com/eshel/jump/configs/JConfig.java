@@ -7,6 +7,7 @@ import com.eshel.jump.JumpHelper;
 import com.eshel.jump.ParamsAdapter;
 import com.eshel.jump.log.AndroidLogImpl;
 import com.eshel.jump.log.ILog;
+import com.eshel.jump.log.JLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,11 @@ public class JConfig {
 	public JConfig setLogAdapter(ILog log){
 		if(log != null)
 			mLog = log;
+		return this;
+	}
+
+	public JConfig openLog(){
+		JLog.openLog();
 		return this;
 	}
 

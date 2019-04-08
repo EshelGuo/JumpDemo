@@ -1,17 +1,7 @@
 Jump
-	功能 -- 跳转
-		startActivity
-			隐示跳转
-			显示跳转
-		startActivityForResult
-		sendBroadcastReceiver
-		startService
 
-方式: 
-	类似 Retrfit2, 注解+动态代理
-	
 扩展:
-    日志工具 Debug 开关 (控制 d 级别日志)
+    日志工具 Debug 开关 (控制 d 级别日志)(√)
 	拦截器 仿照OKHttp框架
 		JumpInterceptor 跳转拦截
 		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
@@ -20,7 +10,11 @@ Jump
     通过给Activity成员变量添加 @Params 注解来实现解析解析参数后直接给变量赋值
 
     扩展 IntentParser 支持的数组(List)类型
-	超链接跳转: JumpRoute
+	超链接跳转: JumpRoute (√)
+	JumpRoute 参数JavaBean对象支持
+	JumpRoute 隐示意图的支持
+	JumpRoute 发送广播的支持
+	JumpRoute 开启服务的支持
 	整理常用隐示意图跳转 SystemJump
 	
 	解析器:  仿照 Gson 框架 解析参数时拦截
@@ -38,25 +32,45 @@ Jump
 		Call jumpLogin();//不立即跳转(call.interceptor().join(Call).jump())
 	}
 	日志:
-		仿照 WXAPI, 提供 LogAdapter 使框架使用者可以拦截日志
-
+		仿照 WXAPI, 提供 LogAdapter 使框架使用者可以拦截日志(√)
 
 Anno:
-	@Intent
-		targetType = Activity, 
-	
-	@IntentParser
-	
-	@Params
-	
-	@Flag 可用于参数, 可用于方法
-	@Action 同上
-	@Category 同上
-	@Type 同上
-	@TargetClass 同上
-	@TargetName 同上
 	@IntentFilter 用于注册广播等
 
+
+测试:
+    隐示意图跳转(√)
+    JumpRouter 超链接跳转(√)
+    日志工具 Debug 开关 (控制 d 级别日志)
+
+
+	功能 -- 跳转(√)
+		startActivity(√)
+			隐示跳转
+			显示跳转
+		startActivityForResult(√)
+		sendBroadcastReceiver(√)
+		startService(√)
+
+方式:
+	类似 Retrfit2, 注解+动态代理(√)
+
+
+
+
+	@Intent(√)
+		targetType = Activity,
+
+	@IntentParser(√)
+
+	@Params(√)
+
+	@Flag 可用于参数, 可用于方法(√)
+	@Action 同上(√)
+	@Category 同上(√)
+	@Type 同上(√)
+	@TargetClass 同上(√)
+	@TargetName 同上(√)
 
 步骤:
 	日志系统 -- ILog -- AndroidLogImpl -- Log(框架中使用此类打印日志)  -- 扩展: XXXLogAdapter implements ILogAdapter{}
@@ -92,21 +106,15 @@ int parseParseId(Intent)
 	  ↓
   parseParams()			--  解析参数
 	  ↓
-  
-	  ↓
-	  
-	  ↓
-	  
-	  ↓
-	  
-	  ↓
-	  ↓
-  
 
+	  ↓
 
-测试:
-    隐示意图跳转
+	  ↓
 
+	  ↓
+
+	  ↓
+	  ↓
 
 
 

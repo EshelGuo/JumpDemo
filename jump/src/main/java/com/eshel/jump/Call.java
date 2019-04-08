@@ -113,7 +113,7 @@ public final class Call {
 
 			return new JumpURI(scheme, path, params);
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 		return null;
 	}
