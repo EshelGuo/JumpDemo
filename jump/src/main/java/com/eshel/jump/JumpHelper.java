@@ -38,6 +38,11 @@ public class JumpHelper {
         return sConfig;
     }
 
+    public static void parseIntent(@NonNull Object target, @NonNull Intent intent, boolean needRecycleMemoryIntent){
+        int id = intent.getIntExtra(com.eshel.jump.anno.Intent.PARSE_ID, 0);
+        parseIntent(id, target, intent, needRecycleMemoryIntent);
+    }
+
     /**
      * @IntentParser(intentType = IntentType.MemoryIntent, id = 2)
      * @param id id为 @IntentParser 中的id

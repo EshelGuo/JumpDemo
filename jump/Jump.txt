@@ -16,6 +16,8 @@ Jump
 		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
 	全局配置: 配置全局拦截器
 
+    通过给Activity成员变量添加 @Params 注解来实现解析解析参数后直接给变量赋值
+
     扩展 IntentParser 支持的数组(List)类型
 	超链接跳转: JumpRoute
 	
