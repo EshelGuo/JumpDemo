@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -28,9 +30,11 @@ import com.eshel.jump.router.JumpURI;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, AtTextWatcher.AtListener {
 
+    private static final String TAG = JumpConst.TAG;
     private Button mButton;
     private RadioGroup mRg_types;
     private RadioButton mIbn;
@@ -41,12 +45,22 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     int mInt;
     float mFloat;
     String mString;
+    private AtTextWatcher atTextWatcher;
+
+    String[] names = {"张三", "李四", "王五"};
+    Random random = new Random();
+    Handler mHandler = new Handler(Looper.getMainLooper());
+    private EditText et;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findView();
+
+        char c = ' ';
+        System.out.println(Integer.valueOf(c));
+
         mRg_types.setOnCheckedChangeListener(this);
         mRg_types.check(mIbn.getId());
 
@@ -121,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mEt_input = findViewById(R.id.et_input);
         findViewById(R.id.btn_setting).setOnClickListener(this);
         findViewById(R.id.btn_link).setOnClickListener(this);
+        et = findViewById(R.id.et_at);
+        atTextWatcher = new AtTextWatcher(this);
+        et.addTextChangedListener(atTextWatcher);
     }
 
     @Override
@@ -172,5 +189,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 JLog.i(JumpConst.TAG, base64Uri.toString());
                 break;
         }
+    }
+
+    @Override
+    public void triggerAt() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                atTextWatcher.insertTextForAt(et, names[random.nextInt(names.length)]);
+            }
+        }, 500);
     }
 }
