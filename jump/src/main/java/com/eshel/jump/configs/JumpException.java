@@ -17,7 +17,7 @@ public class JumpException extends RuntimeException{
     }
 
     public JumpException(ProxyInfo proxyInfo, String msg) {
-        super(msg+proxyInfo == null ? "" : proxyInfo.toString());
+        super(msg+(proxyInfo == null ? "" : proxyInfo.toString()));
     }
 
     /**

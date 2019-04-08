@@ -135,7 +135,11 @@ public class JumpUtil {
                 if(intentM == null)
                     intentM = MemoryIntent.getIntent(getMemoryIntentKey(intent));
 
-                param = intentM.load(anno.value(), Object.class);
+                if(intentM != null)
+                    param = intentM.load(anno.value(), Object.class);
+                else
+                    throw new JumpException(new ProxyInfo(target.getClass().getName(), targetMethod.getName()),
+                            "解析函数 IntentType 为 MemoryIntent, 跳转时没有配置 IntentType 为 MemoryIntent");
             }
             params[i] = param;
         }

@@ -122,4 +122,11 @@ public class JUtils {
     public static boolean isEmpty(Map map) {
         return isNull(map) || map.size() == 0;
     }
+
+    /**
+     * 判断String是否为boolean类型
+     */
+    public static boolean checkStringIsBoolean(String str){
+        return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);
+    }
 }

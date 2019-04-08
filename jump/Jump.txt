@@ -11,6 +11,7 @@ Jump
 	类似 Retrfit2, 注解+动态代理
 	
 扩展:
+    日志工具 Debug 开关 (控制 d 级别日志)
 	拦截器 仿照OKHttp框架
 		JumpInterceptor 跳转拦截
 		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
@@ -20,6 +21,7 @@ Jump
 
     扩展 IntentParser 支持的数组(List)类型
 	超链接跳转: JumpRoute
+	整理常用隐示意图跳转 SystemJump
 	
 	解析器:  仿照 Gson 框架 解析参数时拦截
 		ParserAdapter <TYPE>{
@@ -102,7 +104,8 @@ int parseParseId(Intent)
   
 
 
-
+测试:
+    隐示意图跳转
 
 
 

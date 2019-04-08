@@ -92,15 +92,23 @@ public final class Call {
 				for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
 					if(entry.getValue() instanceof Serializable)
 						params.put(entry.getKey(), (Serializable) entry.getValue());
-					else
+					else {
+						JLog.e(JumpConst.TAG, "Call.toUri() 方法暂时不支持解析 JavaBean 对象(仅支持基础数据类型的解析)");
 						return null;
+					}
 				}
+				params.put(JumpConst.INTENT_TYPE, JumpConst.TYPE_MEMORY_INTENT);
 			}else {
 				Bundle extras = intent.getExtras();
 				params = new HashMap<>(extras.size());
 				for (String key : extras.keySet()) {
 					params.put(key, (Serializable) extras.get(key));
 				}
+			}
+
+			if(builder.mJumpType == JumpType.StartActForResult){
+				params.put(JumpConst.JUMP_TYPE, JumpConst.JUMP_TYPE_START_ACTIVITY_FOR_RESULT);
+				params.put(JumpConst.REQUEST_CODE, builder.mRequestCode);
 			}
 
 			return new JumpURI(scheme, path, params);
@@ -123,8 +131,8 @@ public final class Call {
 
 	private void executeFromJumpUriInternal() {
 		IntentBuilder builder = JConfig.getInstance().getIntentBuilderProvider().provideIntentBuilder();
-		builder.setTargetName(uri.getPath());
 		builder.setContext(context);
+		builder.setTargetName(uri.getPath());
 
 		Set<Map.Entry<String, Serializable>> entries = uri.getParams().entrySet();
 		Iterator<Map.Entry<String, Serializable>> it = entries.iterator();
@@ -166,6 +174,9 @@ public final class Call {
 
 		if(builder.mIntentType == null)
 			builder.mIntentType = IntentType.Intent;
+		if(builder.mJumpType == null)
+			builder.setJumpType(JumpType.StartAct);
+
 
 		for (Map.Entry<String, Serializable> entry : entries) {
 			builder.setParams(entry.getKey(), entry.getValue());

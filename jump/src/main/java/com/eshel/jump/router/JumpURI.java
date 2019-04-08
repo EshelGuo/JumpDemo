@@ -7,6 +7,8 @@ import com.eshel.jump.JUtils;
 import com.eshel.jump.log.JLog;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -126,7 +128,7 @@ public class JumpURI {
 			path = body.substring(0, pathSeparatorIndex);
 			parseParams(body.substring(pathSeparatorIndex + 1, body.length()));
 		}
-//		path = URLDecoder.decode(path);
+		path = URLDecoder.decode(path);
 	}
 
 	private void parseParams(String paramsLink) {
@@ -142,7 +144,7 @@ public class JumpURI {
 		}
 	}
 
-	private void parseParam(String param) {
+	private void parseParam(String param) {if(param == null) return;
 		String[] entry = param.split(paramsValueSeparator);
 		if(JUtils.isEmpty(entry) || entry.length != 2)
 			return;
@@ -184,7 +186,7 @@ public class JumpURI {
 				value = Integer.valueOf(valueS);
 			}
 		}catch (Exception e){
-			JLog.printStackTrace(e);
+			JLog.printStackTraceD(e);
 		}
 
 		if(value != null){
@@ -292,6 +294,8 @@ public class JumpURI {
 	private boolean parseBoolean(String key, String valueS) {
 		Boolean value;
 		try {
+			if(!JUtils.checkStringIsBoolean(valueS))
+				return false;
 			value = Boolean.valueOf(valueS);
 			if(value != null) {
 				paramsMap.put(key, value);
@@ -339,14 +343,14 @@ public class JumpURI {
 	}
 
 	private void parseString(String key, String valueS) {
-//		valueS = URLDecoder.decode(valueS);
+		valueS = URLDecoder.decode(valueS);
 		paramsMap.put(key, valueS);
 	}
 
 	private boolean parseForcibleString(String key, String valueS) {
 		if(valueS.startsWith(stringStartFlag) && valueS.endsWith(stringEndFlag)){
 			String value = valueS.substring(1, valueS.length());
-//			value = URLDecoder.decode(value);
+			value = URLDecoder.decode(value);
 			paramsMap.put(key, value);
 			return true;
 		}
@@ -369,7 +373,7 @@ public class JumpURI {
 	private boolean checkSchemeInvalid(){
 		if(checkInvalid(JUtils.isEmpty(scheme)))
 			return true;
-		return checkInvalid(scheme.startsWith(SCHEME_JUMP));
+		return checkInvalid(!(scheme.equalsIgnoreCase(SCHEME_JUMP) || scheme.equalsIgnoreCase(SCHEME_JUMPS)));
 	}
 
 	/**
@@ -398,7 +402,7 @@ public class JumpURI {
 				Serializable value = entry.getValue();
 				String finalValue;
 
-				finalValue = convertToJumpURIParams(value);
+				finalValue = convertToJumpURIParamsAndEncode(value);
 
 				if(isFristEntry) {
 					isFristEntry = false;
@@ -407,7 +411,7 @@ public class JumpURI {
 				}
 				bodyBuilder.append(key);
 				bodyBuilder.append(paramsValueSeparator);
-//					bodyBuilder.append(URLEncoder.encode(finalValue));
+				bodyBuilder.append(finalValue);
 				bodyBuilder.append(finalValue);
 			}
 		}
@@ -418,7 +422,7 @@ public class JumpURI {
 		return String.format(Locale.getDefault(), "%s%s%s", scheme, schemeSeparator, body);
 	}
 
-	private String convertToJumpURIParams(Serializable value) {
+	private String convertToJumpURIParamsAndEncode(Serializable value) {
 		//boolean
 		if(value instanceof Boolean || boolean.class.isInstance(value))
 			return Boolean.toString((Boolean) value);
@@ -426,8 +430,11 @@ public class JumpURI {
 		//string
 		if(value instanceof String){
 			String valueS = (String) value;
-			if(needStartEndFlagString(valueS))
+			if(needStartEndFlagString(valueS)) {
+				valueS = URLEncoder.encode(valueS);
 				return "\"" + valueS + "\"";
+			}
+			valueS = URLEncoder.encode(valueS);
 			return valueS;
 		}
 

@@ -34,6 +34,11 @@ public class JLog {
 
 	public static void printStackTrace(Throwable throwable){
 		String stackTraceString = Log.getStackTraceString(throwable);
-		e(JumpConst.TAG, stackTraceString);
+		w(JumpConst.TAG, stackTraceString);
+	}
+
+	public static void printStackTraceD(Throwable throwable){
+		String stackTraceString = Log.getStackTraceString(throwable);
+		d(JumpConst.TAG, stackTraceString);
 	}
 }

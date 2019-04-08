@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -19,8 +21,15 @@ import com.eshel.jump.anno.Category;
 import com.eshel.jump.anno.ExtraParams;
 import com.eshel.jump.anno.Flag;
 import com.eshel.jump.anno.Type;
+import com.eshel.jump.configs.JumpConst;
+import com.eshel.jump.log.JLog;
+import com.eshel.jump.router.JumpRouter;
+import com.eshel.jump.router.JumpURI;
 
-public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 
     private Button mButton;
     private RadioGroup mRg_types;
@@ -102,14 +111,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         });
     }
 
-    @Type
-    @Flag
-    @Action
-    @Category
-    @ExtraParams(
-            key   = "aaa",
-            value = "vvv"
-    )
+
     private void findView() {
         mButton = findViewById(R.id.button);
         mRg_types = findViewById(R.id.rg_types);
@@ -117,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mFbn = findViewById(R.id.fbn);
         mSbn = findViewById(R.id.sbn);
         mEt_input = findViewById(R.id.et_input);
+        findViewById(R.id.btn_setting).setOnClickListener(this);
+        findViewById(R.id.btn_link).setOnClickListener(this);
     }
 
     @Override
@@ -145,5 +149,28 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         if(needClear)
             mEt_input.setText("");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_setting:
+                JumpFactory.getJump().jumpSystemSetting(this, Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                break;
+            case R.id.btn_link:
+                String link = null;
+                try {
+                    link = "jump://com.eshel.jump.DemoAct?intentType=MemoryIntent&Int=22&Float=12.3f&String=\""+ URLEncoder.encode("http://www.baidu.com?user=gsw&test=你好", "GBK")+"\"";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                JLog.i(JumpConst.TAG, link);
+                JumpRouter.fromLink(this, link).execute();
+                JumpURI uri = JumpFactory.getJump().prepareJumpDemoAct(this, 123, 123.6f, "haha").toUri(false);
+                JumpURI base64Uri = JumpFactory.getJump().prepareJumpDemoAct(this, 123, 123.6f, "haha").toUri(true);
+                JLog.i(JumpConst.TAG, uri.toString());
+                JLog.i(JumpConst.TAG, base64Uri.toString());
+                break;
+        }
     }
 }
