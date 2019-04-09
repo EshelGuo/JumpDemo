@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.eshel.jump.configs.JumpException;
@@ -168,5 +169,10 @@ public class IntentBuilder {
 		}else if(mIntentType == IntentType.MemoryIntent){
 			getMemoryIntent().save(key, value);
 		}
+	}
+
+	public void setData(Uri data) {
+		if(data != null)
+			mIntent.setData(data);
 	}
 }

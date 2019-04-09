@@ -3,12 +3,14 @@ package com.eshel.jump;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.eshel.jump.anno.AContext;
 import com.eshel.jump.anno.Action;
 import com.eshel.jump.anno.Category;
+import com.eshel.jump.anno.Data;
 import com.eshel.jump.anno.ExtraParams;
 import com.eshel.jump.anno.Flag;
 import com.eshel.jump.anno.Intent;
@@ -238,6 +240,10 @@ public final class Call {
 		Bundle params = parser.parseExtraParams(extraParamsAnno);
 		builder.setMethodExtra(params);
 
+		Data dataAnno = ap.getDataAnno();
+		Uri data = parser.parseData(dataAnno);
+		builder.setData(data);
+
 		parseMethodParams(ap, parser, builder);
 		return builder;
 	}
@@ -305,6 +311,10 @@ public final class Call {
 			TargetName targetNameAnno = ap.getTargetNameAnno();
 			String targetName = parser.parseParamsTargetName(targetNameAnno, type, arg);
 			builder.setTargetName(targetName);
+
+			Data dataAnno = ap.getDataAnno();
+			Uri data = parser.parseParamsData(dataAnno, type, arg);
+			builder.setData(data);
 
 			Params paramsAnno = ap.getParamsAnno();
 			if(paramsAnno != null)

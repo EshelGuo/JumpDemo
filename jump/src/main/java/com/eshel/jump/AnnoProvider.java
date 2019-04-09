@@ -3,6 +3,7 @@ package com.eshel.jump;
 import com.eshel.jump.anno.AContext;
 import com.eshel.jump.anno.Action;
 import com.eshel.jump.anno.Category;
+import com.eshel.jump.anno.Data;
 import com.eshel.jump.anno.ExtraParams;
 import com.eshel.jump.anno.Flag;
 import com.eshel.jump.anno.Intent;
@@ -83,6 +84,10 @@ public class AnnoProvider {
 		return (Type) getAnno(Type.class);
 	}
 
+	public Data getDataAnno() {
+		return (Data) getAnno(Data.class);
+	}
+
 	private Annotation getAnno(Class<? extends Annotation> annoClass){
 		if(annoClass.isInstance(anno))
 			return anno;
@@ -94,4 +99,5 @@ public class AnnoProvider {
 		}
 		return null;
 	}
+
 }

@@ -69,8 +69,13 @@ public @interface Intent {
     int requestCode() default NULL_I;
 
     /**
-     * todo v2.0 待实现
      * 此处如果指定ID, 则在调用 JumpUtil.parseIntent() 时会执行 带注解 IntentParser(id = 1)并对应ID的方法
      */
     int parseId() default 0;
+
+    /**
+     * 内部会将该值使用 Uri.parse() 转为Uri, 然后设置给 Intent
+     * @return
+     */
+    String data() default NULL;
 }

@@ -1,11 +1,13 @@
 package com.eshel.jump;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.eshel.jump.anno.AContext;
 import com.eshel.jump.anno.Action;
 import com.eshel.jump.anno.Category;
+import com.eshel.jump.anno.Data;
 import com.eshel.jump.anno.ExtraParams;
 import com.eshel.jump.anno.Flag;
 import com.eshel.jump.anno.Intent;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import static com.eshel.jump.configs.JumpConst.NULL;
 import static com.eshel.jump.configs.JumpConst.NULL_I;
@@ -73,22 +76,11 @@ public class MethodAnnoParser {
 	}
 
 	public String parseAction(Action actionAnno) {
-		String action = null;
-
-		if(intentAnno != null)
-		{
-			action = intentAnno.action();
-		}
-
-		if(actionAnno != null)
-		{
-			String temp = actionAnno.value();
-			if(temp != NULL) action = temp;
-		}
-
-		if(action == NULL)
-			action = null;
-		return action;
+		if(actionAnno != null && actionAnno.value() != NULL)
+			return actionAnno.value();
+		else if(intentAnno != null && intentAnno.action() != NULL)
+			return intentAnno.action();
+		return null;
 	}
 
 	public String[] parseCategory(Category categoryAnno) {
@@ -286,6 +278,35 @@ public class MethodAnnoParser {
 				}
 				return categorys.toArray(new String[categorys.size()]);
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * 解析方法上和 Intent 注解中 的 @Data 主机的值并转换为 Uri
+	 */
+	public Uri parseData(Data dataAnno) {
+		if(dataAnno != null && dataAnno.value() != NULL){
+			return Uri.parse(dataAnno.value());
+		}else if(intentAnno != null && intentAnno.data() != NULL){
+			return Uri.parse(intentAnno.data());
+		}
+		return null;
+	}
+
+	public Uri parseParamsData(Data dataAnno, Class<?> type, Object arg) {
+		if(dataAnno == null)
+			return null;
+		if(arg instanceof Uri)
+			return (Uri) arg;
+		String dataFirst = dataAnno.value();
+		if(NULL == dataFirst || dataFirst == null){
+			if(arg instanceof String)
+				return Uri.parse((String) arg);
+		}else {
+			if(!dataFirst.contains("%") && arg instanceof String)
+				return Uri.parse(dataFirst + arg);
+			return Uri.parse(String.format(Locale.getDefault(), dataFirst, arg));
 		}
 		return null;
 	}

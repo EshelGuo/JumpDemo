@@ -3,6 +3,7 @@ package com.eshel.jump;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -135,9 +136,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mEt_input = findViewById(R.id.et_input);
         findViewById(R.id.btn_setting).setOnClickListener(this);
         findViewById(R.id.btn_link).setOnClickListener(this);
+        findViewById(R.id.btn_call_phone).setOnClickListener(this);
+        findViewById(R.id.btn_call_phone1).setOnClickListener(this);
+        findViewById(R.id.btn_call_phone2).setOnClickListener(this);
         et = findViewById(R.id.et_at);
         atTextWatcher = new AtTextWatcher(this);
         et.addTextChangedListener(atTextWatcher);
+        new Intent().setData(Uri.parse("tel:1008611"));
     }
 
     @Override
@@ -173,6 +178,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         switch (v.getId()){
             case R.id.btn_setting:
                 JumpFactory.getJump().jumpSystemSetting(this, Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                break;
+            case R.id.btn_call_phone:
+                JumpFactory.getJump().jumpCallPhone6(this, 123456);
+                break;
+            case R.id.btn_call_phone1:
+                JumpFactory.getJump().jumpCallPhone4(this, "15001045147");
+                break;
+            case R.id.btn_call_phone2:
+                JumpFactory.getJump().jumpCallPhone5(this, "123456");
                 break;
             case R.id.btn_link:
                 String link = null;
