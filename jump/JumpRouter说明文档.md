@@ -1,16 +1,16 @@
-#JumpRouter说明文档
+# JumpRouter说明文档
 
-###作用
+### 作用
 * 实现超链接跳转本地 Activity
 * 目前仅支持显示意图跳转
 * 目前仅支持传输基本数据类型
 
-###使用方法
+### 使用方法
 * 生成超链接: 比如`jump://com.eshel.DemoAct?intentType=MemoryIntent&Int=22&Float=12.3f`
 * 使用 `JumpRouter.fromLink(context, link).execute()` 执行链接跳转
 * 使用 `JumpRouter.generateLink(Call)` 自动生成链接 
 
-###生成超链接规则
+### 生成超链接规则
 **名词:**
 
 * 以超链接`jump://com.eshel.DemoAct?intentType=MemoryIntent&Int=22&Float=12.3f&String=haha`为例
