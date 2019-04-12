@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -30,9 +31,9 @@ public class MainActivity extends AppCompatActivity implements ReplyTextView.Rep
 
     @Override
     public void onClick(View v) {
-        CharSequence firstText = "我有两行啊\n我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈";
+        CharSequence firstText = "我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈";
 
-        CharSequence secondText = "我有一行...";
+        CharSequence secondText = "我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈我有两行啊我有两行啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈";
         CharSequence thirdlyText = "我有\n\n一万行也没用哈哈哈....";
         firstText = setNormalReplySpan("张三: ", firstText, "www.baidu.com");
         secondText = setNormalReplySpan("李四: ", secondText, null);
@@ -63,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements ReplyTextView.Rep
     }
 
     private CharSequence setNormalReplySpan(String author, CharSequence firstText, final String imagePath) {
+        TextView tv = textView.getFirstView();
+        int width = tv.getWidth();
+        if(width == 0){
+            tv.measure(0,0);
+            width = tv.getMeasuredWidth();
+        }
+        firstText = TextUtils.ellipsize(firstText, textView.getTextPaint(), width - tv.getPaddingLeft() -  tv.getPaddingRight(), TextUtils.TruncateAt.MIDDLE);
         String imageText = "[查看图片]";
         String source = author + firstText + (imagePath == null ? "" : imageText);
         int authorStart = 0;

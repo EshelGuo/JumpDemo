@@ -2,6 +2,8 @@ package com.eshel.imageloader.testreply;
 
 import android.text.Layout;
 import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -62,10 +64,29 @@ public class ClickSpanInvoker{
             int line = layout.getLineForVertical(y);
             int off = layout.getOffsetForHorizontal(line, x);
 
-            Spannable spannable = (Spannable) widget.getText();
-            ClickableSpan[] links = spannable.getSpans(off, off, ClickableSpan.class);
+            CharSequence text = widget.getText();
+            Class<? extends CharSequence> type = text.getClass();
+            boolean spannableValue = Spannable.class.isAssignableFrom(type);
+            boolean spannedValue = text instanceof Spanned;
 
-            if (links.length != 0) {
+            if(!(spannableValue || spannedValue))
+                return false;
+
+            Spannable spannable = null;
+            if(spannableValue)
+                spannable = (Spannable) text;
+
+            Spanned spanned = null;
+            if(spannedValue)
+                spanned = (Spanned) text;
+
+            ClickableSpan[] links = null;
+            if(spannable != null)
+                links = spannable.getSpans(off, off, ClickableSpan.class);
+            if(spanned != null)
+                links = spanned.getSpans(off, off, ClickableSpan.class);
+
+            if (links != null && links.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
                     links[0].onClick(widget);
                     return true;

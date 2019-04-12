@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.Spannable;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -95,9 +96,9 @@ public class ReplyTextView extends LinearLayout{
         thirdlyView.setOnTouchListener(new ClickSpanOnTouchListener());
         moreView.setOnTouchListener(new ClickSpanOnTouchListener());
 
-        firstView.setEllipsize(TextUtils.TruncateAt.END);
-        secondView.setEllipsize(TextUtils.TruncateAt.END);
-        thirdlyView.setEllipsize(TextUtils.TruncateAt.END);
+//        firstView.setEllipsize(TextUtils.TruncateAt.START);
+//        secondView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+//        thirdlyView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
 
 //        firstView.setOnTouchListener(listener);
 //        secondView.setOnTouchListener(listener);
@@ -170,6 +171,33 @@ public class ReplyTextView extends LinearLayout{
             moreView.setVisibility(GONE);
     }
 
+
+    /**
+     * 0 = firstView
+     * 1 = secondView
+     * 2 = thir...View
+     * @param index 如上
+     * @return
+     */
+    public TextPaint getTextPaint(int index){
+        switch (index){
+            case 0:
+                return firstView.getPaint();
+            case 1:
+                return secondView.getPaint();
+            case 2:
+                return thirdlyView.getPaint();
+        }
+        return null;
+    }
+
+    public TextPaint getTextPaint(){
+        return getTextPaint(0);
+    }
+
+    public TextView getFirstView(){
+        return firstView;
+    }
     public interface ReplyInitHandler{
         void initTextStyle(TextView first, TextView second, TextView thirdly, TextView more);
     }
