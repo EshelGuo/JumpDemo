@@ -1,1 +1,1 @@
-include ':app', ':jump'
+include ':app', ':jump', ':testreply'

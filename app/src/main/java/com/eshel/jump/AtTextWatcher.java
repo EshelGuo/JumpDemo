@@ -21,15 +21,28 @@ public class AtTextWatcher implements TextWatcher {
         this.mListener = listener;
     }
 
+    //该方法未测试
+    public void insertTextForAtIndex(EditText et, CharSequence text, int atIndex){
+        this.atIndex = atIndex;
+        StringBuilder sb = new StringBuilder();
+        sb.append('@');
+        insertTextForAtInternal(et, text, sb);
+    }
+
     public void insertTextForAt(EditText et, CharSequence text){
         if(atIndex == -1)
             return;
-        StringBuilder sb = new StringBuilder(text);
+        StringBuilder sb = new StringBuilder();
+        insertTextForAtInternal(et, text, sb);
+//        et.invalidate();
+    }
+
+    private void insertTextForAtInternal(EditText et, CharSequence text, StringBuilder sb){
+        sb.append(text);
         sb.append(atEndFlag);
         text = sb.toString();
         Editable text1 = et.getText();
         text1.insert(atIndex+1, text);
-//        et.invalidate();
     }
 
     @Override

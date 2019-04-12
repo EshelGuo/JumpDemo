@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, AtTextWatcher.AtListener {
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, AtTextWatcher.AtListener{
 
     private static final String TAG = JumpConst.TAG;
     private Button mButton;
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton mFbn;
     private RadioButton mSbn;
     private EditText mEt_input;
+    private EditText mEtAt2;
 
     int mInt;
     float mFloat;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     Random random = new Random();
     Handler mHandler = new Handler(Looper.getMainLooper());
     private EditText et;
+    AtProxy atProxy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mFbn = findViewById(R.id.fbn);
         mSbn = findViewById(R.id.sbn);
         mEt_input = findViewById(R.id.et_input);
+        mEtAt2 = findViewById(R.id.et_at_2);
+
+        atProxy = new AtProxy(this, mEtAt2);
+        findViewById(R.id.btn_at).setOnClickListener(atProxy);
         findViewById(R.id.btn_setting).setOnClickListener(this);
         findViewById(R.id.btn_link).setOnClickListener(this);
         findViewById(R.id.btn_call_phone).setOnClickListener(this);

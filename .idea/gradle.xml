@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/jump" />
+            <option value="$PROJECT_DIR$/testreply" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

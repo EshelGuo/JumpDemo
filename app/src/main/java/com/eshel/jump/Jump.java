@@ -59,6 +59,9 @@ public interface Jump {
     @Intent
     @Action(android.content.Intent.ACTION_DIAL)
     void jumpCallPhone6(Context context, @Data("tel:%d") int phone);
+
+    @Intent(target = AtListActivity.class, intentType = IntentType.MemoryIntent)
+    void jumpAtList(Context context, @Params(AtListActivity.AT_CALLBACK) AtListActivity.AtCallback callback);
 /*
     @Intent(target = DemoAct.class)
     void v2_0test(@AContext Context context, @Flag int flag, @Action String action);*/
