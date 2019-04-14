@@ -1,6 +1,7 @@
 package com.eshel.jump;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -101,7 +102,8 @@ public class IntentBuilder {
 			if(!BroadcastReceiver.class.isAssignableFrom(targetClass))
 				throw new JumpException(mProxyInfo, "jumpType 为 sendBroadcastReceiver, 但提供的Class却不是BroadcastReceiver-- "+targetClass.getSimpleName());
 		}else if(mJumpType == JumpType.StartService){
-			throw new JumpException(mProxyInfo, "jumpType 为 StartService, 但提供的Class却不是Service-- "+targetClass.getSimpleName());
+			if(!Service.class.isAssignableFrom(targetClass))
+				throw new JumpException(mProxyInfo, "jumpType 为 StartService, 但提供的Class却不是Service-- "+targetClass.getSimpleName());
 		}
 	}
 
