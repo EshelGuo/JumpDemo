@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ReplyTextView">
+        <attr name="reply_text_size" format="dimension|reference"/>
+        <attr name="reply_photo_show_text" format="reference|string"/>
+        <attr name="reply_photo_show_icon_id" format="reference"/>
+        <attr name="reply_photo_show_text_color" format="reference|color"/>
+        <attr name="reply_author_text_color" format="reference|color"/>
+        <attr name="reply_content_text_color" format="reference|color"/>
+        <attr name="reply_more_text_color" format="reference|color"/>
+    </declare-styleable>
+</resources>

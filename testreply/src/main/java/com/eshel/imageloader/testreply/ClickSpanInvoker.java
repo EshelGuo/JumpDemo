@@ -1,5 +1,6 @@
 package com.eshel.imageloader.testreply;
 
+import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,8 +15,8 @@ import android.widget.TextView;
  */
 
 public class ClickSpanInvoker{
-    float downX;
-    float downY;
+    int downX;
+    int downY;
     private ViewConfiguration vc;
     private int mSlop;
 
@@ -32,9 +33,11 @@ public class ClickSpanInvoker{
         }
         int action = event.getAction();
         if(action == MotionEvent.ACTION_DOWN){
-            downX = event.getX();
-            downY = event.getY();
-            return true;
+            downX = (int) event.getX();
+            downY = (int) event.getY();
+
+            ClickableSpan[] clickSpan = getClickSpan(widget, downX, downY);
+            return clickSpan != null && clickSpan.length != 0;
         }
 
         if(action == MotionEvent.ACTION_MOVE){
@@ -56,49 +59,50 @@ public class ClickSpanInvoker{
             if (y > widget.getHeight() || x > widget.getWidth() || y < 0 || x < 0) {
                 return true;
             }
-
-            x -= widget.getTotalPaddingLeft();
-            y -= widget.getTotalPaddingTop();
-
-            Layout layout = widget.getLayout();
-            int line = layout.getLineForVertical(y);
-            int off = layout.getOffsetForHorizontal(line, x);
-
             CharSequence text = widget.getText();
             Class<? extends CharSequence> type = text.getClass();
-            boolean spannableValue = Spannable.class.isAssignableFrom(type);
-            boolean spannedValue = text instanceof Spanned;
 
-            if(!(spannableValue || spannedValue))
+            if(!(Spannable.class.isAssignableFrom(type) || text instanceof Spanned))
                 return false;
 
-            Spannable spannable = null;
-            if(spannableValue)
-                spannable = (Spannable) text;
-
-            Spanned spanned = null;
-            if(spannedValue)
-                spanned = (Spanned) text;
-
-            ClickableSpan[] links = null;
-            if(spannable != null)
-                links = spannable.getSpans(off, off, ClickableSpan.class);
-            if(spanned != null)
-                links = spanned.getSpans(off, off, ClickableSpan.class);
+            ClickableSpan[] links = getClickSpan(widget, x, y);
 
             if (links != null && links.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
                     links[0].onClick(widget);
                     return true;
-                }/* else if (action == MotionEvent.ACTION_DOWN) {
-                    Selection.setSelection(spannable,
-                            spannable.getSpanStart(links[0]),
-                            spannable.getSpanEnd(links[0]));
-                }*/
+                }
                 return false;
             }
         }
         return false;
+    }
+
+    @Nullable
+    private ClickableSpan[] getClickSpan(TextView widget, int x, int y) {
+        CharSequence text = widget.getText();
+
+        x -= widget.getTotalPaddingLeft();
+        y -= widget.getTotalPaddingTop();
+
+        Layout layout = widget.getLayout();
+        int line = layout.getLineForVertical(y);
+        int off = layout.getOffsetForHorizontal(line, x);
+
+        Spannable spannable = null;
+        if(text instanceof Spannable)
+			spannable = (Spannable) text;
+
+        Spanned spanned = null;
+        if(text instanceof Spanned)
+			spanned = (Spanned) text;
+
+        ClickableSpan[] links = null;
+        if(spannable != null)
+			links = spannable.getSpans(off, off, ClickableSpan.class);
+        if(spanned != null)
+			links = spanned.getSpans(off, off, ClickableSpan.class);
+        return links;
     }
 }
 

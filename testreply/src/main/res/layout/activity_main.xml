@@ -16,6 +16,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:reply_text_size="15sp"
+        app:reply_photo_show_text="[查看图片]"
+        app:reply_photo_show_icon_id="@drawable/icon_reply"
+        app:reply_author_text_color="#ff4a4a4a"
+        app:reply_photo_show_text_color="#ff33AFED"
+        app:reply_content_text_color="#ffA4A4A4"
+        app:reply_more_text_color="#ff33AFED"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello World!"/>

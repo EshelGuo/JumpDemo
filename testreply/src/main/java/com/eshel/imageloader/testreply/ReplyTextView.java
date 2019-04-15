@@ -1,24 +1,22 @@
 package com.eshel.imageloader.testreply;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,289 +26,351 @@ import java.util.Locale;
  * Created by guoshiwen on 2019/4/12.
  */
 
-public class ReplyTextView extends LinearLayout{
-    private static final char endFlag = (char) 8198;
+public class ReplyTextView extends LinearLayout {
+	private static final char endFlag = (char) 8198;
 
-    private TextView firstView;
-    private TextView secondView;
-    private TextView thirdlyView;
-    private TextView moreView;
+	private TextView firstView;
+	private TextView secondView;
+	private TextView thirdlyView;
+	private TextView moreView;
 
-    private int residueLine = 3;//剩余行数
-    private int showReplyLength = 0;//显示回复条数
+	private int residueLine = 3;//剩余行数
+	private int showReplyLength = 0;//显示回复条数
 
-    private List<ReplyData> replyDatas = new ArrayList<>(3);
-    private ReplyInitHandler handler = new ReplyInitHandler() {
-        @Override
-        public void initTextStyle(TextView first, TextView second, TextView thirdly, TextView more) {
-        }
+	private List<ReplyData> replyDatas = new ArrayList<>(3);
+	private ReplyInitHandler handler = new ReplyInitHandler() {
+		@Override
+		public void initTextStyle(TextView first, TextView second, TextView thirdly, TextView more) {
+		}
 
-        @Override
-        public String getPhotoShowText(String photoUrl) {
-            return "[查看图片]";
-        }
+		@Override
+		public String getMoreText(int replyLength) {
+			return String.format(Locale.CHINA, "共有%d条回复", replyLength);
+		}
+	};
+	private float mPhotoIconWidth;
+	private float mEllipsisWidth;
+	//获取[查看图片]文本
+	private String mPhotoText;
+	//获取 查看图片 icon 资源ID
+	private int mPhotoIconId;
+	//获取 查看图片 颜色
+	private int mPhotoTextColor;
+	//获取作者颜色
+	private int mAuthorTextColor;
+	//获取内容颜色
+	private int mContentTextColor;
+	//获取更多按钮颜色
+	private int mMoreTextColor;
+	//点击更多事件
+	private OnClickListener moreClickListener;
+	//点击作者事件
+	private AuthorOnClickListener mAuthorClickListener;
+	//点击图片事件
+	private PhotoOnClickListener mPhotoOnClickListener;
 
-        @Override
-        public int getAuthorTextColor() {
-            return 0xff4a4a4a;
-        }
+	int allReplyCount;
 
-        @Override
-        public int getContentTextColor() {
-            return 0xffA4A4A4;
-        }
+	public ReplyTextView(Context context) {
+		this(context, null);
+	}
 
-        @Override
-        public int getPhotoTextColor() {
-            return 0xff33AFED;
-        }
+	public ReplyTextView(Context context, @Nullable AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
 
-        @Override
-        public int getMoreColor() {
-            return 0xff33AFED;
-        }
+	public ReplyTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		init(attrs);
+	}
 
-        @Override
-        public String getMoreText(int replyLength) {
-            return String.format(Locale.CHINA, "共有%d条回复", replyLength);
-        }
+	private void init(AttributeSet attrs) {
+		setOrientation(VERTICAL);
+		View.inflate(getContext(), R.layout.view_reply, this);
+		firstView = findViewById(R.id.reply_first);
+		secondView = findViewById(R.id.reply_second);
+		thirdlyView = findViewById(R.id.reply_thirdly);
+		moreView = findViewById(R.id.reply_more);
 
-        @Override
-        public void onClickPhoto(View view, String photoUrl) {
-            Toast.makeText(view.getContext(),photoUrl,Toast.LENGTH_LONG).show();
-        }
+		firstView.setOnTouchListener(new ClickSpanOnTouchListener());
+		secondView.setOnTouchListener(new ClickSpanOnTouchListener());
+		thirdlyView.setOnTouchListener(new ClickSpanOnTouchListener());
+		moreView.setOnTouchListener(new ClickSpanOnTouchListener());
 
-        @Override
-        public void onClickMore(View view) {
-            Toast.makeText(view.getContext(),"共有1条评论",Toast.LENGTH_LONG).show();
-        }
-    };
-    {
-    /*private OnTouchListener listener = new OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            boolean ret = false;
-            CharSequence text = ((TextView) v).getText();
-            Spannable stext = Spannable.Factory.getInstance().newSpannable(text);
-            TextView widget = (TextView) v;
-            int action = event.getAction();
+		TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.ReplyTextView);
+		float px = ta.getDimensionPixelSize(R.styleable.ReplyTextView_reply_text_size, 13);
+		mPhotoText = ta.getString(R.styleable.ReplyTextView_reply_photo_show_text);
+		mPhotoIconId = ta.getResourceId(R.styleable.ReplyTextView_reply_photo_show_icon_id, R.drawable.icon_reply);
+		mPhotoTextColor = ta.getColor(R.styleable.ReplyTextView_reply_photo_show_text_color, Color.RED);
+		mAuthorTextColor = ta.getColor(R.styleable.ReplyTextView_reply_author_text_color, Color.BLACK);
+		mContentTextColor = ta.getColor(R.styleable.ReplyTextView_reply_content_text_color, Color.BLACK);
+		mMoreTextColor = ta.getColor(R.styleable.ReplyTextView_reply_more_text_color, Color.BLUE);
+		ta.recycle();
 
-            if (action == MotionEvent.ACTION_UP ||
-                    action == MotionEvent.ACTION_DOWN) {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
+		setTextSizePx((int) px);
+	}
 
-                x -= widget.getTotalPaddingLeft();
-                y -= widget.getTotalPaddingTop();
+	public void setPhotoOnClickListener(PhotoOnClickListener listener) {
+		mPhotoOnClickListener = listener;
+		notifyReply(allReplyCount);
+	}
 
-                x += widget.getScrollX();
-                y += widget.getScrollY();
+	public void setMoreClickListener(OnClickListener listener) {
+		moreClickListener = listener;
+		notifyReply(allReplyCount);
+	}
 
-                Layout layout = widget.getLayout();
-                int line = layout.getLineForVertical(y);
-                int off = layout.getOffsetForHorizontal(line, x);
+	public void setAuthorClickListener(AuthorOnClickListener listener) {
+		mAuthorClickListener = listener;
+		notifyReply(allReplyCount);
+	}
 
-                ClickableSpan[] link = stext.getSpans(off, off, ClickableSpan.class);
+	public void setPhotoText(String text) {
+		mPhotoText = text;
+		notifyReply(allReplyCount);
+	}
 
-                if (link.length != 0) {
-                    if (action == MotionEvent.ACTION_UP) {
-                        link[0].onClick(widget);
-                    }
-                    ret = true;
-                }
-            }
-            return ret;
-        }
-    };*/
-    }
-    public ReplyTextView(Context context) {
-        this(context, null);
-    }
+	public void setPhotoIcon(int resId) {
+		mPhotoIconId = resId;
+		notifyReply(allReplyCount);
+	}
 
-    public ReplyTextView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+	public void setPhotoTextColor(int color) {
+		mPhotoTextColor = color;
+		notifyReply(allReplyCount);
+	}
 
-    public ReplyTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
+	public void setAuthorTextColor(int color) {
+		mAuthorTextColor = color;
+		notifyReply(allReplyCount);
+	}
 
-    private void init() {
-        setOrientation(VERTICAL);
-        View.inflate(getContext(), R.layout.view_reply, this);
-        firstView = findViewById(R.id.reply_first);
-        secondView = findViewById(R.id.reply_second);
-        thirdlyView = findViewById(R.id.reply_thirdly);
-        moreView = findViewById(R.id.reply_more);
+	public void setContentTextColor(int color) {
+		mContentTextColor = color;
+		notifyReply(allReplyCount);
+	}
 
-//        firstView.setMovementMethod(NoScrollLinkMovementMethod.getInstance());
-//        secondView.setMovementMethod(NoScrollLinkMovementMethod.getInstance());
-//        thirdlyView.setMovementMethod(NoScrollLinkMovementMethod.getInstance());
-//        moreView.setMovementMethod(NoScrollLinkMovementMethod.getInstance());
+	public void setMoreTextColor(int color) {
+		mMoreTextColor = color;
+		notifyReply(allReplyCount);
+	}
 
-        firstView.setOnTouchListener(new ClickSpanOnTouchListener());
-        secondView.setOnTouchListener(new ClickSpanOnTouchListener());
-        thirdlyView.setOnTouchListener(new ClickSpanOnTouchListener());
-        moreView.setOnTouchListener(new ClickSpanOnTouchListener());
+	public void setTextSize(int sp) {
+		firstView.setTextSize(sp);
+		secondView.setTextSize(sp);
+		thirdlyView.setTextSize(sp);
+		moreView.setTextSize(sp);
+	}
 
-//        firstView.setEllipsize(TextUtils.TruncateAt.START);
-//        secondView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-//        thirdlyView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+	public void setTextSizePx(int px) {
+		firstView.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+		secondView.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+		thirdlyView.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+		moreView.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+	}
 
-//        firstView.setOnTouchListener(listener);
-//        secondView.setOnTouchListener(listener);
-//        thirdlyView.setOnTouchListener(listener);
-    }
+	public void initTextsStyle(ReplyInitHandler handler) {
+		if (handler == null)
+			return;
+		this.handler = handler;
+		handler.initTextStyle(firstView, secondView, thirdlyView, moreView);
+	}
 
-    public void initTextsStyle(ReplyInitHandler handler){
-        if(handler == null)
-            return;
-        this.handler = handler;
-        handler.initTextStyle(firstView, secondView, thirdlyView, moreView);
-    }
+	public void resetReply() {
+		replyDatas.clear();
+	}
 
-    public void resetReply(){
-        replyDatas.clear();
-    }
+	public void addReply(String author, String content, String photoUrl) {
+		replyDatas.add(new ReplyData(author, content, photoUrl));
+	}
 
-    public void addReply(String author, String content, String photoUrl){
-        replyDatas.add(new ReplyData(author, content, photoUrl));
-    }
+	public void notifyReply(int allReplyCount) {
+		this.allReplyCount = allReplyCount;
 
-    public void notifyReply(int allReplyCount){
-        residueLine = 3;
-        showReplyLength = 0;
+		residueLine = 3;
+		showReplyLength = 0;
 
-        int size = replyDatas.size();
-        if(size == 0){
-            setVisibility(GONE);
-            return;
-        }else {
-            setVisibility(VISIBLE);
-        }
-        notifyReplyText(replyDatas.get(0), firstView);
+		int size = replyDatas.size();
+		if (size == 0) {
+			setVisibility(GONE);
+			return;
+		} else {
+			setVisibility(VISIBLE);
+		}
+		notifyReplyText(replyDatas.get(0), firstView);
 
-        notifyReplyText(size >= 2 ? replyDatas.get(1) : null, secondView);
-        notifyReplyText(size >= 3 ? replyDatas.get(2) : null, thirdlyView);
+		notifyReplyText(size >= 2 ? replyDatas.get(1) : null, secondView);
+		notifyReplyText(size >= 3 ? replyDatas.get(2) : null, thirdlyView);
 
 
-        if(allReplyCount > showReplyLength){
-            moreView.setVisibility(VISIBLE);
-            String moreText = handler.getMoreText(allReplyCount);
-            SpannableString ss = new SpannableString(moreText);
-            ss.setSpan(new ForegroundColorSpan(handler.getMoreColor()), 0, moreText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    handler.onClickMore(widget);
-                }
-            }, 0, moreText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            moreView.setText(ss);
-        }else {
-            moreView.setVisibility(GONE);
-        }
-    }
+		if (allReplyCount > showReplyLength) {
+			moreView.setVisibility(VISIBLE);
+			String moreText = handler.getMoreText(allReplyCount);
+			SpannableString ss = new SpannableString(moreText);
+			ss.setSpan(new ForegroundColorSpan(mMoreTextColor), 0, moreText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			ss.setSpan(new ClickableSpan() {
+				@Override
+				public void onClick(View widget) {
+					if (moreClickListener != null)
+						moreClickListener.onClick(widget);
+				}
+			}, 0, moreText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			moreView.setText(ss);
+		} else {
+			moreView.setVisibility(GONE);
+		}
+	}
 
-    private void notifyReplyText(final ReplyData data, TextView tv) {
-        if(residueLine <= 0 || data == null){
-            tv.setVisibility(GONE);
-            return;
-        }else {
-            tv.setVisibility(VISIBLE);
-        }
+	private void notifyReplyText(final ReplyData data, TextView tv) {
+		if (residueLine <= 0 || data == null) {
+			tv.setVisibility(GONE);
+			return;
+		} else {
+			tv.setVisibility(VISIBLE);
+		}
 
-        TextPaint paint = tv.getPaint();
+		int iconId = mPhotoIconId;
+		TextPaint paint = tv.getPaint();
+		String iconText = "";
 
-        String ellipsisSymbol = "...";
-        float ellipsisWidth = paint.measureText(ellipsisSymbol);
+		if (data.photoUrl != null) {
+			iconText = "[i]";
+			if (mPhotoIconWidth == 0) {
+				mPhotoIconWidth = new ImageSpan(getContext(), iconId).getDrawable().getIntrinsicWidth();
+			}
+		}
 
-        String photoText = "";
-        float authorWidth = paint.measureText(data.author);
-        float photoWidth = 0;
-        if(data.photoUrl != null) {
-            photoText = handler.getPhotoShowText(data.photoUrl) + endFlag;
-            photoWidth = paint.measureText(photoText);
-        }
+		if (mEllipsisWidth == 0) {
+			String ellipsisSymbol = "...";
+			mEllipsisWidth = paint.measureText(ellipsisSymbol);
+		}
 
-        int width = tv.getWidth();
-        if(width == 0){
-            tv.measure(0,0);
-            width = tv.getMeasuredWidth();
-        }
-        int maxLine = 2;
-        if(maxLine > residueLine)
-            maxLine = residueLine;
-        int lineWidth = width - tv.getPaddingLeft() -  tv.getPaddingRight();
-        CharSequence contentText = TextUtils.ellipsize(data.content, paint, lineWidth * 2 - authorWidth - photoWidth - ellipsisWidth, TextUtils.TruncateAt.END);
+		float authorWidth = paint.measureText(data.author);
 
-        CharSequence wholeText = data.author + contentText + photoText;
+		String photoText = "";
+		float photoWidth = 0;
 
-        int authorStart = 0;
-        int authorEnd = data.author.length() + authorStart;
+		if (data.photoUrl != null) {
+			photoText = mPhotoText + endFlag;
+			photoWidth = paint.measureText(photoText);
+		}
 
-        int contentStart = authorEnd;
-        int contentEnd = contentStart + contentText.length();
+		int width = tv.getWidth();
+		if (width == 0) {
+			tv.measure(0, 0);
+			width = tv.getMeasuredWidth();
+		}
+		int maxLine = 2;
+		if (maxLine > residueLine)
+			maxLine = residueLine;
+		int lineWidth = width - tv.getPaddingLeft() - tv.getPaddingRight();
+		CharSequence contentText = TextUtils.ellipsize(data.content, paint, lineWidth * 2 - mPhotoIconWidth - authorWidth - photoWidth - mEllipsisWidth, TextUtils.TruncateAt.END);
 
-        int imageStart = -1;
-        int imageEnd = -1;
+		CharSequence wholeText = data.author + contentText + iconText + photoText;
 
-        if(data.photoUrl != null){
-            imageStart = contentEnd;
-            imageEnd = imageStart + photoText.length() - 1;
-        }
+		int authorStart = 0;
+		int authorEnd = data.author.length() + authorStart;
 
-        SpannableString ss = new SpannableString(wholeText);
-        ss.setSpan(new ForegroundColorSpan(handler.getAuthorTextColor()), authorStart, authorEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(handler.getContentTextColor()), contentStart, contentEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if(imageStart != -1){
-            ss.setSpan(new ForegroundColorSpan(handler.getPhotoTextColor()), imageStart, imageEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    handler.onClickPhoto(widget, data.photoUrl);
-                }
+		int contentStart = authorEnd;
+		int contentEnd = contentStart + contentText.length();
 
-                @Override
-                public void updateDrawState(TextPaint ds) {
-                    super.updateDrawState(ds);
-                    ds.setUnderlineText(false);
-                }
-            }, imageStart, imageEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
+		int iconStart = -1;
+		int iconEnd = -1;
 
-        tv.setText(ss);
-        int lineCount = tv.getLineCount();
-        if(lineCount > maxLine) {
-            tv.setLines(maxLine);
-            lineCount = maxLine;
-        }
+		if (data.photoUrl != null) {
+			iconStart = contentEnd;
+			iconEnd = iconStart + iconText.length();
+		}
 
-        residueLine -= lineCount;
-        showReplyLength++;
-    }
+		int imageTextStart = -1;
+		int imageTextEnd = -1;
 
-    public interface ReplyInitHandler{
-        void initTextStyle(TextView first, TextView second, TextView thirdly, TextView more);
-        String getPhotoShowText(String photoUrl);
-        int getAuthorTextColor();
-        int getContentTextColor();
-        int getPhotoTextColor();
-        int getMoreColor();
-        String getMoreText(int replyLength);
-        void onClickPhoto(View view, String photoUrl);
-        void onClickMore(View view);
-    }
+		if (data.photoUrl != null) {
+			imageTextStart = iconEnd;
+			imageTextEnd = imageTextStart + photoText.length() - 1;
+		}
 
-    public static class ReplyData{
-        public String author;
-        public String content;
-        public String photoUrl;
+		SpannableString ss = new SpannableString(wholeText);
+		ss.setSpan(new ClickableSpan() {
+			@Override
+			public void onClick(View widget) {
+				if (mAuthorClickListener != null)
+					mAuthorClickListener.onClick(widget, replyDatas.indexOf(data), data.author);
+			}
 
-        public ReplyData(String author, String content, String photoUrl) {
-            this.author = author;
-            this.content = content;
-            this.photoUrl = photoUrl;
-        }
-    }
+			@Override
+			public void updateDrawState(TextPaint ds) {
+				super.updateDrawState(ds);
+				ds.setUnderlineText(false);
+			}
+		}, authorStart, authorEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		ss.setSpan(new ForegroundColorSpan(mAuthorTextColor), authorStart, authorEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		ss.setSpan(new ForegroundColorSpan(mContentTextColor), contentStart, contentEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		if (imageTextStart != -1) {
+			ImageSpan imageSpan = new CenterAlignImageSpan(getContext(), iconId);
+			ss.setSpan(imageSpan, iconStart, iconEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			ss.setSpan(new ClickableSpan() {
+				@Override
+				public void onClick(View widget) {
+					if (mPhotoOnClickListener != null)
+						mPhotoOnClickListener.onClick(widget, replyDatas.indexOf(data), data.photoUrl);
+				}
+
+				@Override
+				public void updateDrawState(TextPaint ds) {
+					super.updateDrawState(ds);
+					ds.setUnderlineText(false);
+				}
+			}, iconStart, imageTextEnd, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+			ss.setSpan(new ForegroundColorSpan(mPhotoTextColor), imageTextStart, imageTextEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+
+		tv.setText(ss);
+		int lineCount = tv.getLineCount();
+		if (lineCount > maxLine) {
+			tv.setLines(maxLine);
+			lineCount = maxLine;
+		}
+
+		residueLine -= lineCount;
+		showReplyLength++;
+	}
+
+	public interface ReplyInitHandler {
+		//初始化文字样式
+		void initTextStyle(TextView first, TextView second, TextView thirdly, TextView more);
+
+		//获取更多按钮文本
+		String getMoreText(int replyLength);
+	}
+
+	public static class ReplyData {
+		public String author;
+		public String content;
+		public String photoUrl;
+
+		public ReplyData(String author, String content, String photoUrl) {
+			this.author = author;
+			this.content = content;
+			this.photoUrl = photoUrl;
+		}
+	}
+
+	public int dp2px(float dpValue) {
+		final float scale = getContext().getResources().getDisplayMetrics().density;
+		return (int) (dpValue * scale + 0.5f);
+	}
+
+	public interface AuthorOnClickListener {
+		//index 最小为0 , 最大为2
+		void onClick(View widget, int index, String authorName);
+	}
+
+	public interface PhotoOnClickListener {
+		//index 最小为0 , 最大为2
+		void onClick(View widget, int index, String photoUrl);
+	}
 }
