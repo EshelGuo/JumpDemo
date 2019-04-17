@@ -2,10 +2,6 @@ package com.eshel.jump;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.text.Editable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.EditText;
 
@@ -15,22 +11,30 @@ import android.widget.EditText;
 
 public class AtProxy implements AtListActivity.AtCallback, View.OnClickListener {
     Activity activity;
-    EditText mEtAt;
+    AtTextWatcher atw;
+    EditText et;
 
-    public AtProxy(Activity activity, EditText mEtAt2) {
+    public AtProxy(Activity activity, AtTextWatcher attw, EditText et) {
         this.activity = activity;
-        mEtAt = mEtAt2;
-        ImpeccableAtTextWatcher iaTextWatcher = new ImpeccableAtTextWatcher(mEtAt, Color.RED);
-        mEtAt2.addTextChangedListener(iaTextWatcher);
+        atw = attw;
+        this.et = et;
+        activity.findViewById(R.id.btn_at).setOnClickListener(this);
     }
 
     @Override
     public void onChooseResult(int userId, String name) {
-        SpannableString ss = new SpannableString(String.format("@%s%c", name, ImpeccableAtTextWatcher.atEndFlag));
+        int selectionStart = et.getSelectionStart();
+        int selectionEnd = et.getSelectionEnd();
+
+        if(selectionEnd > selectionStart){
+            selectionStart = selectionEnd;
+        }
+        atw.insertTextForAtIndex(name, selectionStart, userId);
+        /*SpannableString ss = new SpannableString(String.format("@%s%c", name, ImpeccableAtTextWatcher.atEndFlag));
         ss.setSpan(new ForegroundColorSpan(Color.RED), 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        int index = mEtAt.getSelectionStart();
-        Editable text = mEtAt.getText();
-        text.insert(index, ss);
+        int index = atw.getSelectionStart();
+        Editable text = atw.getText();
+        text.insert(index, ss);*/
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.eshel.jump;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mEt_input = findViewById(R.id.et_input);
         mEtAt2 = findViewById(R.id.et_at_2);
 
-        atProxy = new AtProxy(this, mEtAt2);
         findViewById(R.id.btn_at).setOnClickListener(atProxy);
         findViewById(R.id.btn_setting).setOnClickListener(this);
         findViewById(R.id.btn_link).setOnClickListener(this);
@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         findViewById(R.id.btn_call_phone1).setOnClickListener(this);
         findViewById(R.id.btn_call_phone2).setOnClickListener(this);
         et = findViewById(R.id.et_at);
-        atTextWatcher = new AtTextWatcher(this);
+        atTextWatcher = new AtTextWatcher(et, Color.RED,this);
+        atProxy = new AtProxy(this, atTextWatcher, et);
         et.addTextChangedListener(atTextWatcher);
         new Intent().setData(Uri.parse("tel:1008611"));
     }
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                atTextWatcher.insertTextForAt(et, names[random.nextInt(names.length)]);
+                atTextWatcher.insertTextForAt(names[random.nextInt(names.length)], 13);
             }
         }, 500);
     }

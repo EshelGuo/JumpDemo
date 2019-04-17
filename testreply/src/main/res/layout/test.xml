@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/layout_outside"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#FFFFFFFF"
+              android:orientation="vertical">
+
+
+    <com.wobo.social.story.info.view.StoryInfoToolbar
+        android:id="@+id/mStoryInfoToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.wobo.social.story.info.view.StoryLoadFailView
+        android:id="@+id/reload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></com.wobo.social.story.info.view.StoryLoadFailView>
+
+    <com.wobo.live.view.Xiu8CenterLoadingView
+        android:id="@+id/mLoadingView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF" />
+
+    <com.wobo.social.story.info.view.StoryInfoDelView
+        android:id="@+id/mStoryDelView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.xiu8.dynamic.bundle.detail.CommentInputView
+            android:id="@+id/mCommentInputView"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+        <!--android:layout_marginTop="10dp"-->
+
+        <com.wobo.social.story.info.view.StoryInfoLayout
+            android:id="@+id/mStoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="51dp"
+            android:background="#FFFFFF"
+            android:visibility="visible" />
+    </FrameLayout>
+
+
+</LinearLayout>
