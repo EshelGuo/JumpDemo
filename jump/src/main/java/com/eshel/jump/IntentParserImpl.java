@@ -61,11 +61,16 @@ public class IntentParserImpl {
 		Annotation[][] annos = targetMethod.getParameterAnnotations();
 		Class<?>[] types = targetMethod.getParameterTypes();
 
-		if(annos == null || types == null)
+		if(annos == null || types == null || types.length == 0) {
+			try {
+				targetMethod.invoke(target);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
 			return;
-
-		if(annos.length == 0)
-			return;
+		}
 
 		Object[] params = new Object[types.length];
 		MemoryIntent intentM = null;
