@@ -1,19 +1,13 @@
 package com.eshel.jump;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.eshel.jump.anno.IntentParser;
-import com.eshel.jump.anno.Params;
 import com.eshel.jump.configs.JConfig;
 import com.eshel.jump.configs.JumpException;
-import com.eshel.jump.enums.IntentType;
+import com.eshel.jump.impl.IntentInjectImpl;
+import com.eshel.jump.impl.IntentParserImpl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
 /**
@@ -38,9 +32,28 @@ public class JumpHelper {
         return sConfig;
     }
 
+    /**
+     * @see #parseIntent(int, Object, Intent, boolean)
+     */
     public static void parseIntent(@NonNull Object target, @NonNull Intent intent, boolean needRecycleMemoryIntent){
         int id = intent.getIntExtra(com.eshel.jump.anno.Intent.PARSE_ID, 0);
         parseIntent(id, target, intent, needRecycleMemoryIntent);
+    }
+
+    /**
+     * 注入目标类, 反射实现
+     * @param target
+     * @param intent
+     */
+    public static void inject(@NonNull Object target, @NonNull Intent intent){
+        IntentInjectImpl.injectInternal(target, intent, IntentInjectImpl.AUTO);
+    }
+
+    /**
+     * @param usedMemoryIntent 是否是使用 MemoryIntent 来传递的数据
+     */
+    public static void inject(@NonNull Object target, @NonNull Intent intent, boolean usedMemoryIntent){
+        IntentInjectImpl.injectInternal(target, intent, usedMemoryIntent ? IntentInjectImpl.USE_MEMORY_INTENT : IntentInjectImpl.NO_USE_MEMORY_INTENT);
     }
 
     /**

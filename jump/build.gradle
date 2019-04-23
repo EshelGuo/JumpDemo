@@ -64,9 +64,9 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 
 static def versionCode(){
-    return 21
+    return 22
 }
 
 static def versionName(){
-    return "2.1.1"
+    return "2.2.0"
 }

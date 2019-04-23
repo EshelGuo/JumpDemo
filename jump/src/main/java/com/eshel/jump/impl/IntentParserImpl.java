@@ -1,10 +1,14 @@
-package com.eshel.jump;
+package com.eshel.jump.impl;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.eshel.jump.AnnoProvider;
+import com.eshel.jump.IntentBuilder;
+import com.eshel.jump.MemoryIntent;
+import com.eshel.jump.ProxyInfo;
 import com.eshel.jump.anno.Action;
 import com.eshel.jump.anno.Category;
 import com.eshel.jump.anno.Flag;
@@ -28,7 +32,7 @@ import java.util.Set;
 /**
  * createBy Eshel
  * createTime: 2019/4/6 06:17
- * desc: TODO
+ * desc: 解析 Intent 实现
  */
 public class IntentParserImpl {
 

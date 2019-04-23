@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *     void jumpLogin0(Context context, @Params("PHONE")String phone, @Params("password") String psw);
  * }
  */
-@Target(ElementType.PARAMETER)
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Params {
     /**

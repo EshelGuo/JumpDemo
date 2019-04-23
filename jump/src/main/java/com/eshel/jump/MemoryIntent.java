@@ -24,8 +24,8 @@ public class MemoryIntent {
         intents.put(key, intent);
     }
 
-    public static void recycleIntent(Class clazz){
-        intents.remove(clazz);
+    public static void recycleIntent(String key){
+        intents.remove(key);
     }
 
     public static void recycleIntent(MemoryIntent intent){
