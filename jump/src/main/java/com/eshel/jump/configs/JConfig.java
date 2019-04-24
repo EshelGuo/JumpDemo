@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.eshel.jump.IntentBuilderProvider;
 import com.eshel.jump.JumpHelper;
 import com.eshel.jump.ParamsAdapter;
+import com.eshel.jump.configs.interceptors.Interceptor;
 import com.eshel.jump.log.AndroidLogImpl;
 import com.eshel.jump.log.ILog;
 import com.eshel.jump.log.JLog;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * createBy Eshel
  * createTime: 2019/3/30 14:07
- * desc: TODO
+ * desc: JumpLib 全局配置
  */
 public class JConfig {
 
@@ -32,6 +33,24 @@ public class JConfig {
 	private ILog mLog;
 	private List<ParamsAdapter> mParamsAdapters = new ArrayList<>(3);
 	private IntentBuilderProvider mIntentBuilderProvider;
+	private List<Interceptor> mInterceptorList;
+
+	public void addInterceptor(@NonNull Interceptor interceptor){
+		getInterceptorList().add(interceptor);
+	}
+
+	public void removeInterceptor(@NonNull Interceptor interceptor){
+		getInterceptorList().remove(interceptor);
+	}
+
+	/**
+	 * @hide
+	 */
+	public List<Interceptor> getInterceptorList(){
+		if(mInterceptorList == null)
+			mInterceptorList = new ArrayList<>();
+		return mInterceptorList;
+	}
 
 	public void setIntentBuilderProvider(@NonNull IntentBuilderProvider intentBuilderProvider){
 		mIntentBuilderProvider = intentBuilderProvider;

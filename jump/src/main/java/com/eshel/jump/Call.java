@@ -21,6 +21,7 @@ import com.eshel.jump.anno.Type;
 import com.eshel.jump.configs.JConfig;
 import com.eshel.jump.configs.JumpConst;
 import com.eshel.jump.configs.JumpException;
+import com.eshel.jump.configs.interceptors.InterceptorUtil;
 import com.eshel.jump.enums.IntentType;
 import com.eshel.jump.enums.JumpType;
 import com.eshel.jump.log.JLog;
@@ -249,8 +250,13 @@ public final class Call {
 	}
 
 	private void invokeIntent(IntentBuilder builder) {
+		InterceptorUtil.invokeBeforeBuildIntent(builder);
+
 		android.content.Intent finalIntent = builder.build();
 		Context context = builder.getContext();
+
+		InterceptorUtil.invokeOnJumpExecute(context, this, finalIntent);
+
 		if(isCancel)
 			return;
 		switch (builder.mJumpType){

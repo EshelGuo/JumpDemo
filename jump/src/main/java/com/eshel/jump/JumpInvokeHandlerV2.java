@@ -1,5 +1,7 @@
 package com.eshel.jump;
 
+import com.eshel.jump.configs.interceptors.InterceptorUtil;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -15,6 +17,7 @@ public class JumpInvokeHandlerV2 implements InvocationHandler {
         if(JUtils.isEmpty(annotations))
             return method.invoke(proxy, args);
         Call call = new Call(proxy, method, args, annotations);
+        InterceptorUtil.invokeOnCallCreated(call);
         Class<?> returnType = method.getReturnType();
         if(returnType == Call.class)
             return call;

@@ -38,6 +38,10 @@ public class JUtils {
         return obj == null;
     }
 
+    public static boolean notNull(Object obj){
+        return !isNull(obj);
+    }
+
     /**
      * 判断数组是否为null
      */
