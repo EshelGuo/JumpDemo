@@ -7,7 +7,7 @@
 
 * 在app moudle 的build.gradle中添加如下依赖:
 
-	    implementation "com.eshel.lib:jump:2.1"
+	    implementation "com.eshel.lib:jump:2.2"
 
 * 定义接口配置:
     
