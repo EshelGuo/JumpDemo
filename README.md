@@ -71,3 +71,5 @@ public class MainActivity extends Activity{
 ### 2.1
 * 新增注解 `@Data`
 * 新增 JumpRouter 链接跳转Activity
+### 2.2 
+* 增加解析Intent参数时直接在成员变量上加注解, 调用`JumpHelper.inject(this, getIntent())`会自动将数据注入成员变量

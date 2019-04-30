@@ -2,7 +2,7 @@ Jump
 
 扩展:
     日志工具 Debug 开关 (控制 d 级别日志)(√)
-	拦截器 仿照OKHttp框架
+	拦截器 仿照OKHttp框架(√)
 		JumpInterceptor 跳转拦截
 		ParseMethodInterceptor ParseParamsInterceptor 解析接口参数时拦截 (方法注解和参数注解)
 	全局配置: 配置全局拦截器
